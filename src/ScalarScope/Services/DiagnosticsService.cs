@@ -25,7 +25,93 @@ public static class DiagnosticsService
         report.Checks.Add(CheckGPU());
         report.Checks.Add(CheckAppData());
 
+        // Invariant and consistency checks
+        report.Checks.Add(CheckInvariantViolations());
+        report.Checks.Add(CheckConsistencyViolations());
+
         return report;
+    }
+
+    private static DiagnosticCheck CheckInvariantViolations()
+    {
+        var violations = InvariantGuard.GetRecentViolations();
+        var errorCount = violations.Count(v => v.Severity == InvariantSeverity.Error);
+        var warningCount = violations.Count(v => v.Severity == InvariantSeverity.Warning);
+
+        if (errorCount > 0)
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Invariant Violations",
+                Status = CheckStatus.Fail,
+                Message = $"{errorCount} errors, {warningCount} warnings",
+                Details = string.Join("; ", violations
+                    .Where(v => v.Severity == InvariantSeverity.Error)
+                    .Take(3)
+                    .Select(v => $"{v.Rule}: {v.Message}"))
+            };
+        }
+        else if (warningCount > 0)
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Invariant Violations",
+                Status = CheckStatus.Warning,
+                Message = $"{warningCount} warnings",
+                Details = string.Join("; ", violations.Take(3).Select(v => $"{v.Rule}: {v.Message}"))
+            };
+        }
+        else
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Invariant Violations",
+                Status = CheckStatus.Pass,
+                Message = "None detected",
+                Details = "All runtime invariants are satisfied"
+            };
+        }
+    }
+
+    private static DiagnosticCheck CheckConsistencyViolations()
+    {
+        var violations = ConsistencyCheckService.GetRecentViolations();
+        var errorCount = violations.Count(v => v.Severity == ConsistencySeverity.Error);
+        var warningCount = violations.Count(v => v.Severity == ConsistencySeverity.Warning);
+
+        if (errorCount > 0)
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Cross-View Consistency",
+                Status = CheckStatus.Fail,
+                Message = $"{errorCount} errors, {warningCount} warnings",
+                Details = string.Join("; ", violations
+                    .Where(v => v.Severity == ConsistencySeverity.Error)
+                    .Take(3)
+                    .Select(v => $"{v.Rule}: {v.Message}"))
+            };
+        }
+        else if (warningCount > 0)
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Cross-View Consistency",
+                Status = CheckStatus.Warning,
+                Message = $"{warningCount} warnings",
+                Details = string.Join("; ", violations.Take(3).Select(v => $"{v.Rule}: {v.Message}"))
+            };
+        }
+        else
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Cross-View Consistency",
+                Status = CheckStatus.Pass,
+                Message = "Verified",
+                Details = "All cross-view calculations are consistent"
+            };
+        }
     }
 
     private static DiagnosticCheck CheckDotNetVersion()

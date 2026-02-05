@@ -339,8 +339,8 @@ public class ComparisonTrajectoryCanvas : SKCanvasView
             IsAntialias = true
         };
 
-        // Curvature annotation
-        if (current.Curvature > 0.1)
+        // Curvature annotation - use centralized threshold
+        if (current.Curvature > ConsistencyCheckService.HighCurvatureThreshold)
         {
             var pos = ToScreen(current.State2D);
             paint.Color = SKColor.Parse("#ff9f43");
@@ -356,24 +356,20 @@ public class ComparisonTrajectoryCanvas : SKCanvasView
             eigenIdx = Math.Clamp(eigenIdx, 0, eigenvalues.Count - 1);
             var eigen = eigenvalues[eigenIdx];
 
-            var total = eigen.Values.Sum();
-            var firstFactor = total > 0 ? eigen.Values[0] / total : 0;
-
-            paint.Color = firstFactor > 0.5 ? SKColors.LightGreen : SKColors.Orange;
+            // Use centralized calculation for consistency
+            var firstFactor = ConsistencyCheckService.ComputeFirstFactorVariance(eigen.Values, "ComparisonTrajectoryCanvas.Annotations");
+            var interpretation = ConsistencyCheckService.GetEigenInterpretation(firstFactor);
+            var rgb = ConsistencyCheckService.GetInterpretationColor(interpretation);
+            paint.Color = new SKColor(rgb.R, rgb.G, rgb.B);
 
             var y = info.Height - 60;
-            if (firstFactor > 0.7)
+            string annotationText = interpretation switch
             {
-                canvas.DrawText("λ₁ dominates: Shared evaluative axis", 15, y, paint);
-            }
-            else if (firstFactor > 0.4)
-            {
-                canvas.DrawText("λ₁ moderate: Partial unification", 15, y, paint);
-            }
-            else
-            {
-                canvas.DrawText("λ₁ weak: Orthogonal evaluators", 15, y, paint);
-            }
+                EigenInterpretation.StrongSharedAxis => "λ₁ dominates: Shared evaluative axis",
+                EigenInterpretation.ModerateUnification => "λ₁ moderate: Partial unification",
+                _ => "λ₁ weak: Orthogonal evaluators"
+            };
+            canvas.DrawText(annotationText, 15, y, paint);
         }
     }
 
@@ -466,18 +462,19 @@ public class ComparisonTrajectoryCanvas : SKCanvasView
 
             if (eigen.Values.Count > 0)
             {
-                var total = eigen.Values.Sum();
-                var firstFactor = total > 0 ? eigen.Values[0] / total : 0;
+                // Use centralized calculation and thresholds
+                var firstFactor = ConsistencyCheckService.ComputeFirstFactorVariance(eigen.Values, "ComparisonTrajectoryCanvas.Dominance");
 
                 y += 15;
                 paint.TextSize = 9;
 
-                if (firstFactor > 0.6)
+                // Use centralized thresholds for dominance indicator
+                if (firstFactor > ConsistencyCheckService.DominantFirstFactorThreshold)
                 {
                     paint.Color = SKColor.Parse("#4ecdc4");
                     canvas.DrawText("Aligned evaluators", x, y, paint);
                 }
-                else if (firstFactor > 0.35)
+                else if (firstFactor > ConsistencyCheckService.ModerateFirstFactorThreshold)
                 {
                     paint.Color = SKColor.Parse("#ffd93d");
                     canvas.DrawText("Partial alignment", x, y, paint);

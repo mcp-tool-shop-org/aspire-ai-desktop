@@ -407,9 +407,9 @@ public partial class ComparisonViewModel : ObservableObject
         RightDescription = GenerateRunDescription(RightRun, rightFirstFactor, "B");
         InterpretationVerdict = GenerateVerdict(leftFirstFactor, rightFirstFactor, leftFailures, rightFailures);
 
-        // Determine visual dominance for canvas dimming
+        // Determine visual dominance for canvas dimming - use centralized threshold
         var delta = rightFirstFactor - leftFirstFactor;
-        if (Math.Abs(delta) < 0.1)
+        if (Math.Abs(delta) < ConsistencyCheckService.FirstFactorDeltaThreshold)
         {
             // Too close to call - no dimming
             IsLeftDominant = null;
@@ -434,19 +434,26 @@ public partial class ComparisonViewModel : ObservableObject
         var tier = run.Metadata.ConscienceTier;
         var failures = run.Failures.Count;
 
-        if (firstFactor > 0.7)
-            return $"Path {pathLabel}: Strong eigenvalue dominance ({firstFactor:P0}). Evaluators share structure. {tier} tier with {failures} failure(s).";
-        else if (firstFactor > 0.4)
-            return $"Path {pathLabel}: Mixed eigenvalue distribution ({firstFactor:P0}). Partial structure sharing. {tier} tier with {failures} failure(s).";
-        else
-            return $"Path {pathLabel}: Distributed eigenvalues ({firstFactor:P0}). Evaluators are orthogonal. {tier} tier with {failures} failure(s).";
+        // Use centralized interpretation for consistency
+        var interpretation = ConsistencyCheckService.GetEigenInterpretation(firstFactor);
+
+        return interpretation switch
+        {
+            EigenInterpretation.StrongSharedAxis =>
+                $"Path {pathLabel}: Strong eigenvalue dominance ({firstFactor:P0}). Evaluators share structure. {tier} tier with {failures} failure(s).",
+            EigenInterpretation.ModerateUnification =>
+                $"Path {pathLabel}: Mixed eigenvalue distribution ({firstFactor:P0}). Partial structure sharing. {tier} tier with {failures} failure(s).",
+            _ =>
+                $"Path {pathLabel}: Distributed eigenvalues ({firstFactor:P0}). Evaluators are orthogonal. {tier} tier with {failures} failure(s)."
+        };
     }
 
     private static string GenerateVerdict(double leftFirst, double rightFirst, int leftFail, int rightFail)
     {
         var delta = rightFirst - leftFirst;
 
-        if (Math.Abs(delta) < 0.1)
+        // Use centralized threshold for consistency
+        if (Math.Abs(delta) < ConsistencyCheckService.FirstFactorDeltaThreshold)
             return "Both paths show similar eigenvalue structure. No clear convergence advantage.";
         else if (delta > 0.2)
             return $"Path B shows stronger convergence (Δλ₁ = +{delta:P0}). Correlated professors enable unified representation.";

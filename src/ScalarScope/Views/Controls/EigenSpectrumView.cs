@@ -157,16 +157,12 @@ public class EigenSpectrumView : SKCanvasView
         var eigenvalues = Session!.CurrentEigenvalues!.Values;
         if (eigenvalues.Count == 0) return;
 
-        // Compute effective dimensionality (participation ratio)
         var total = eigenvalues.Sum();
         if (total < 0.001) return;
 
-        var normalized = eigenvalues.Select(e => e / total).ToList();
-        var sumSq = normalized.Sum(n => n * n);
-        var effDim = sumSq > 0 ? 1.0 / sumSq : eigenvalues.Count;
-
-        // Compute first factor variance
-        var firstFactorVar = eigenvalues[0] / total;
+        // Use centralized calculations for consistency
+        var effDim = ConsistencyCheckService.ComputeEffectiveDimensionality(eigenvalues, "EigenSpectrumView");
+        var firstFactorVar = ConsistencyCheckService.ComputeFirstFactorVariance(eigenvalues, "EigenSpectrumView");
 
         using var paint = new SKPaint
         {
@@ -182,8 +178,12 @@ public class EigenSpectrumView : SKCanvasView
         canvas.DrawText($"Effective Dim: {effDim:F2} / {eigenvalues.Count}", x, y, paint);
 
         y += 20;
-        // First factor variance
-        var varColor = firstFactorVar > 0.5 ? SKColors.LightGreen : SKColors.Orange;
+        // First factor variance - use centralized threshold
+        var interpretation = ConsistencyCheckService.GetEigenInterpretation(firstFactorVar);
+        var varColor = interpretation == EigenInterpretation.StrongSharedAxis ||
+                       interpretation == EigenInterpretation.ModerateUnification
+            ? SKColors.LightGreen
+            : SKColors.Orange;
         paint.Color = varColor;
         canvas.DrawText($"λ₁ Variance: {firstFactorVar:P0}", x, y, paint);
     }
@@ -193,10 +193,8 @@ public class EigenSpectrumView : SKCanvasView
         var eigenvalues = Session!.CurrentEigenvalues!.Values;
         if (eigenvalues.Count == 0) return;
 
-        var total = eigenvalues.Sum();
-        if (total < 0.001) return;
-
-        var firstFactorVar = eigenvalues[0] / total;
+        // Use centralized calculation for consistency
+        var firstFactorVar = ConsistencyCheckService.ComputeFirstFactorVariance(eigenvalues, "EigenSpectrumView");
 
         using var paint = new SKPaint
         {
@@ -207,32 +205,22 @@ public class EigenSpectrumView : SKCanvasView
         var x = info.Width - 200f;
         var y = 25f;
 
-        string interpretation;
-        SKColor color;
+        // Use centralized interpretation for consistency
+        var interpretation = ConsistencyCheckService.GetEigenInterpretation(firstFactorVar);
+        var rgb = ConsistencyCheckService.GetInterpretationColor(interpretation);
+        var color = new SKColor(rgb.R, rgb.G, rgb.B);
 
-        if (firstFactorVar > 0.7)
+        string interpretationText = interpretation switch
         {
-            interpretation = "Strong shared axis";
-            color = SKColors.LightGreen;
-        }
-        else if (firstFactorVar > 0.5)
-        {
-            interpretation = "Moderate unification";
-            color = SKColors.Yellow;
-        }
-        else if (firstFactorVar > 0.3)
-        {
-            interpretation = "Partial structure";
-            color = SKColors.Orange;
-        }
-        else
-        {
-            interpretation = "Orthogonal evaluators";
-            color = SKColors.Red;
-        }
+            EigenInterpretation.StrongSharedAxis => "Strong shared axis",
+            EigenInterpretation.ModerateUnification => "Moderate unification",
+            EigenInterpretation.PartialStructure => "Partial structure",
+            EigenInterpretation.OrthogonalEvaluators => "Orthogonal evaluators",
+            _ => "Unknown"
+        };
 
         paint.Color = color;
-        canvas.DrawText(interpretation, x, y, paint);
+        canvas.DrawText(interpretationText, x, y, paint);
 
         y += 18;
         paint.Color = SKColors.Gray;
