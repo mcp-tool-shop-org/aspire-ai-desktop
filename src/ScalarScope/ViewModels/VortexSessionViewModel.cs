@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ScalarScope.Models;
+using ScalarScope.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -15,10 +16,28 @@ public partial class VortexSessionViewModel : ObservableObject
     private GeometryRun? _run;
 
     [ObservableProperty]
-    private string _runName = "No run loaded";
+    private string _runName = "No training run loaded yet";
 
     [ObservableProperty]
     private bool _hasRun;
+
+    [ObservableProperty]
+    private string _loadError = "";
+
+    [ObservableProperty]
+    private bool _hasLoadError;
+
+    [ObservableProperty]
+    private List<string> _loadWarnings = [];
+
+    // First-run state (checked from UserPreferencesService)
+    [ObservableProperty]
+    private bool _isFirstRun;
+
+    /// <summary>
+    /// True when we should show the empty state panel (not first run, no data loaded).
+    /// </summary>
+    public bool ShowEmptyState => !IsFirstRun && !HasRun;
 
     [ObservableProperty]
     private string _condition = "";
@@ -39,6 +58,28 @@ public partial class VortexSessionViewModel : ObservableObject
     public VortexSessionViewModel()
     {
         Player.TimeChanged += OnTimeChanged;
+        // Check first-run state on construction
+        RefreshFirstRunState();
+    }
+
+    /// <summary>
+    /// Refresh the first-run state from UserPreferencesService.
+    /// Call this after dismissing the first-run UI.
+    /// </summary>
+    public void RefreshFirstRunState()
+    {
+        IsFirstRun = UserPreferencesService.IsFirstRun;
+        OnPropertyChanged(nameof(ShowEmptyState));
+    }
+
+    partial void OnIsFirstRunChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowEmptyState));
+    }
+
+    partial void OnHasRunChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowEmptyState));
     }
 
     private void OnTimeChanged()
@@ -53,7 +94,7 @@ public partial class VortexSessionViewModel : ObservableObject
     {
         var result = await FilePicker.Default.PickAsync(new PickOptions
         {
-            PickerTitle = "Select ASPIRE Geometry Export",
+            PickerTitle = "Select Training Dynamics Export",
             FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
             {
                 { DevicePlatform.WinUI, new[] { ".json" } },
@@ -69,69 +110,155 @@ public partial class VortexSessionViewModel : ObservableObject
 
     public async Task LoadFromFileAsync(string path)
     {
-        try
-        {
-            var json = await File.ReadAllTextAsync(path);
-            var run = JsonSerializer.Deserialize<GeometryRun>(json);
+        // Full state reset before loading new file
+        ResetState();
 
-            if (run != null)
-            {
-                Run = run;
-                RunName = Path.GetFileNameWithoutExtension(path);
-                HasRun = true;
-                Condition = run.Metadata.Condition;
-                ConscienceTier = run.Metadata.ConscienceTier;
-                FailureCount = run.Failures.Count;
-                Player.TotalCycles = run.Metadata.Cycles;
-                Player.JumpToTimeCommand.Execute(0.0);
-            }
-        }
-        catch (Exception ex)
+        var result = await FileValidationService.ValidateAndLoadAsync(path);
+
+        if (!result.IsSuccess)
         {
-            RunName = $"Error: {ex.Message}";
+            RunName = result.ErrorTitle ?? "Error loading file";
+            LoadError = result.GetFormattedError();
+            HasLoadError = true;
             HasRun = false;
+            return;
         }
+
+        var run = result.Run!;
+        Run = run;
+        RunName = Path.GetFileNameWithoutExtension(path);
+        HasRun = true;
+        HasLoadError = false;
+        LoadWarnings = result.Warnings;
+        Condition = run.Metadata?.Condition ?? "";
+        ConscienceTier = run.Metadata?.ConscienceTier ?? "UNKNOWN";
+        FailureCount = run.Failures?.Count ?? 0;
+        Player.TotalCycles = run.Metadata?.Cycles ?? run.Trajectory?.Timesteps?.Count ?? 0;
+        Player.ConfigureForRunSize(run.Trajectory?.Timesteps?.Count ?? 0);
+        Player.JumpToTimeCommand.Execute(0.0);
+
+        // Notify all computed properties have changed
+        NotifyComputedPropertiesChanged();
+    }
+
+    /// <summary>
+    /// Completely resets session state to initial values.
+    /// Called before loading a new file to ensure clean state.
+    /// </summary>
+    [RelayCommand]
+    public void ResetState()
+    {
+        // Stop any playback
+        if (Player.IsPlaying)
+        {
+            Player.PlayPauseCommand.Execute(null);
+        }
+
+        // Clear run data
+        Run = null;
+        RunName = "No training run loaded yet";
+        HasRun = false;
+
+        // Clear error state
+        HasLoadError = false;
+        LoadError = "";
+        LoadWarnings = [];
+
+        // Clear metadata
+        Condition = "";
+        ConscienceTier = "";
+        FailureCount = 0;
+
+        // Reset player state
+        Player.TotalCycles = 0;
+        Player.JumpToTimeCommand.Execute(0.0);
+        Player.ConfigureForRunSize(0);
+
+        // Notify all computed properties
+        NotifyComputedPropertiesChanged();
+    }
+
+    private void NotifyComputedPropertiesChanged()
+    {
+        OnPropertyChanged(nameof(CurrentTrajectoryState));
+        OnPropertyChanged(nameof(CurrentScalars));
+        OnPropertyChanged(nameof(CurrentEigenvalues));
     }
 
     private TrajectoryTimestep? GetTrajectoryAtTime(double t)
     {
-        if (Run?.Trajectory.Timesteps is not { Count: > 0 } steps)
-            return null;
+        try
+        {
+            if (Run?.Trajectory?.Timesteps is not { Count: > 0 } steps)
+                return null;
 
-        var idx = (int)(t * (steps.Count - 1));
-        return steps[Math.Clamp(idx, 0, steps.Count - 1)];
+            var idx = (int)(t * (steps.Count - 1));
+            idx = Math.Clamp(idx, 0, steps.Count - 1);
+            return steps[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private ScalarTimestep? GetScalarsAtTime(double t)
     {
-        if (Run?.Scalars.Values is not { Count: > 0 } values)
-            return null;
+        try
+        {
+            if (Run?.Scalars?.Values is not { Count: > 0 } values)
+                return null;
 
-        var idx = (int)(t * (values.Count - 1));
-        return values[Math.Clamp(idx, 0, values.Count - 1)];
+            var idx = (int)(t * (values.Count - 1));
+            idx = Math.Clamp(idx, 0, values.Count - 1);
+            return values[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private EigenTimestep? GetEigenvaluesAtTime(double t)
     {
-        if (Run?.Geometry.Eigenvalues is not { Count: > 0 } values)
-            return null;
+        try
+        {
+            if (Run?.Geometry?.Eigenvalues is not { Count: > 0 } values)
+                return null;
 
-        var idx = (int)(t * (values.Count - 1));
-        return values[Math.Clamp(idx, 0, values.Count - 1)];
+            var idx = (int)(t * (values.Count - 1));
+            idx = Math.Clamp(idx, 0, values.Count - 1);
+            return values[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     /// <summary>
     /// Get trajectory points up to current time for rendering path.
+    /// Supports frame skipping for large runs.
     /// </summary>
-    public IEnumerable<TrajectoryTimestep> GetTrajectoryUpToTime(double t)
+    public IEnumerable<TrajectoryTimestep> GetTrajectoryUpToTime(double t, int? frameSkipOverride = null)
     {
-        if (Run?.Trajectory.Timesteps is not { Count: > 0 } steps)
+        if (Run?.Trajectory?.Timesteps is not { Count: > 0 } steps)
             yield break;
 
-        var maxIdx = (int)(t * (steps.Count - 1));
-        for (int i = 0; i <= Math.Min(maxIdx, steps.Count - 1); i++)
+        var maxIdx = (int)(t * Math.Max(0, steps.Count - 1));
+        maxIdx = Math.Clamp(maxIdx, 0, steps.Count - 1);
+        var skip = Math.Max(1, frameSkipOverride ?? Player.FrameSkip);
+
+        for (int i = 0; i <= maxIdx; i += skip)
         {
-            yield return steps[i];
+            if (i < steps.Count)
+                yield return steps[i];
+        }
+
+        // Always include the last point for visual continuity
+        if (maxIdx > 0 && maxIdx % skip != 0 && maxIdx < steps.Count)
+        {
+            yield return steps[maxIdx];
         }
     }
 
@@ -140,10 +267,10 @@ public partial class VortexSessionViewModel : ObservableObject
     /// </summary>
     public IEnumerable<FailureEvent> GetFailuresUpToTime(double t)
     {
-        if (Run?.Failures is null)
+        if (Run?.Failures is null || Run.Failures.Count == 0)
             yield break;
 
-        foreach (var f in Run.Failures.Where(f => f.T <= t))
+        foreach (var f in Run.Failures.Where(f => f != null && f.T <= t))
         {
             yield return f;
         }

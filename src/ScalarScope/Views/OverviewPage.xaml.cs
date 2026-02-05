@@ -14,11 +14,80 @@ public partial class OverviewPage : ContentPage
         BindingContext = App.Session;
     }
 
+    // === First-Run Demo Handlers ===
+
+    private async void OnStartDemoClicked(object? sender, EventArgs e)
+    {
+        // Mark that user has seen the demo (started it)
+        UserPreferencesService.MarkDemoSeen();
+        App.Session.RefreshFirstRunState();
+
+        // Navigate to Compare tab and start the demo
+        await Shell.Current.GoToAsync("//compare");
+
+        // The CompareViewModel will detect demo mode and load both runs
+        // (This will be implemented in Commit 0.3-0.4)
+    }
+
+    private async void OnLoadOwnRunClicked(object? sender, EventArgs e)
+    {
+        // Mark demo as skipped (user chose their own path)
+        UserPreferencesService.MarkDemoSkipped();
+        App.Session.RefreshFirstRunState();
+
+        // Trigger the standard file picker
+        App.Session.LoadRunCommand.Execute(null);
+    }
+
+    private void OnSkipDemoClicked(object? sender, EventArgs e)
+    {
+        // Mark demo as skipped
+        UserPreferencesService.MarkDemoSkipped();
+        App.Session.RefreshFirstRunState();
+
+        // Stay on Overview - the empty state panel will now show
+    }
+
+    // === Sample Run Handlers ===
+
+    private async void OnLoadCorrelatedClicked(object? sender, EventArgs e)
+    {
+        await LoadSampleRunAsync("correlated_professors.json");
+    }
+
+    private async void OnLoadOrthogonalClicked(object? sender, EventArgs e)
+    {
+        await LoadSampleRunAsync("orthogonal_professors.json");
+    }
+
+    private async Task LoadSampleRunAsync(string sampleFileName)
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync($"Samples/{sampleFileName}");
+            using var reader = new StreamReader(stream);
+            var json = await reader.ReadToEndAsync();
+
+            // Write to temp file and load (VortexSessionViewModel expects a file path)
+            var tempPath = Path.Combine(FileSystem.CacheDirectory, sampleFileName);
+            await File.WriteAllTextAsync(tempPath, json);
+
+            await App.Session.LoadFromFileAsync(tempPath);
+
+            // Navigate to trajectory view after loading
+            await Shell.Current.GoToAsync("//trajectory");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to load sample: {ex.Message}", "OK");
+        }
+    }
+
     private async void OnQuickExportClicked(object? sender, EventArgs e)
     {
         if (App.Session.Run == null)
         {
-            exportStatusLabel.Text = "No run loaded";
+            exportStatusLabel.Text = "Load a training run first";
             return;
         }
 
@@ -28,11 +97,11 @@ public partial class OverviewPage : ContentPage
             exportStatusLabel.TextColor = Color.FromArgb("#888");
 
             var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var aspireExports = Path.Combine(documentsPath, "ASPIRE Exports");
-            Directory.CreateDirectory(aspireExports);
+            var scalarScopeExports = Path.Combine(documentsPath, "ScalarScope Exports");
+            Directory.CreateDirectory(scalarScopeExports);
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var outputPath = Path.Combine(aspireExports, $"aspire_screenshot_{timestamp}.png");
+            var outputPath = Path.Combine(scalarScopeExports, $"scalarscope_screenshot_{timestamp}.png");
 
             await _exportService.ExportStillAsync(
                 App.Session.Run,
@@ -68,15 +137,15 @@ public partial class OverviewPage : ContentPage
             exportStatusLabel.Text = "Exporting...";
 
             var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var aspireExports = Path.Combine(documentsPath, "ASPIRE Exports");
-            Directory.CreateDirectory(aspireExports);
+            var scalarScopeExports = Path.Combine(documentsPath, "ScalarScope Exports");
+            Directory.CreateDirectory(scalarScopeExports);
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
             if (action.StartsWith("Screenshot"))
             {
                 var is4K = action.Contains("4K");
-                var outputPath = Path.Combine(aspireExports, $"aspire_{(is4K ? "4k" : "hd")}_{timestamp}.png");
+                var outputPath = Path.Combine(scalarScopeExports, $"scalarscope_{(is4K ? "4k" : "hd")}_{timestamp}.png");
 
                 await _exportService.ExportStillAsync(
                     App.Session.Run,
@@ -94,7 +163,7 @@ public partial class OverviewPage : ContentPage
             {
                 var is60fps = action.Contains("60fps");
                 var is10s = action.Contains("10s");
-                var outputDir = Path.Combine(aspireExports, $"sequence_{timestamp}");
+                var outputDir = Path.Combine(scalarScopeExports, $"sequence_{timestamp}");
 
                 var paths = await _exportService.ExportFrameSequenceAsync(
                     App.Session.Run,
