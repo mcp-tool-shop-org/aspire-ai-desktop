@@ -28,8 +28,36 @@ public static class DiagnosticsService
         // Invariant and consistency checks
         report.Checks.Add(CheckInvariantViolations());
         report.Checks.Add(CheckConsistencyViolations());
+        report.Checks.Add(CheckGoldenRunsAvailable());
 
         return report;
+    }
+
+    private static DiagnosticCheck CheckGoldenRunsAvailable()
+    {
+        var goldens = GoldenRunService.ListGoldenSnapshots().ToList();
+
+        if (goldens.Count > 0)
+        {
+            var runIds = goldens.Select(g => g.RunId).Distinct().Count();
+            return new DiagnosticCheck
+            {
+                Name = "Golden Run Snapshots",
+                Status = CheckStatus.Pass,
+                Message = $"{goldens.Count} snapshots from {runIds} run(s)",
+                Details = "Golden snapshots available for regression testing"
+            };
+        }
+        else
+        {
+            return new DiagnosticCheck
+            {
+                Name = "Golden Run Snapshots",
+                Status = CheckStatus.Info,
+                Message = "None captured",
+                Details = "Capture golden snapshots to enable regression testing"
+            };
+        }
     }
 
     private static DiagnosticCheck CheckInvariantViolations()
