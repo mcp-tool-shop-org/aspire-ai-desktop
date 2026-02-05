@@ -83,22 +83,59 @@ public static class DemoService
 
     /// <summary>
     /// Load a bundled sample run from app package resources.
+    /// Tries multiple paths for compatibility across different MAUI deployments.
     /// </summary>
     private static async Task<GeometryRun?> LoadBundledRunAsync(string fileName)
     {
-        try
+        // Try multiple possible paths for MAUI asset loading
+        var pathsToTry = new[]
         {
-            using var stream = await FileSystem.OpenAppPackageFileAsync($"Samples/{fileName}");
-            using var reader = new StreamReader(stream);
-            var json = await reader.ReadToEndAsync();
+            $"Samples/{fileName}",
+            $"Samples\\{fileName}",
+            fileName,
+        };
 
-            return JsonSerializer.Deserialize<GeometryRun>(json);
-        }
-        catch (Exception ex)
+        foreach (var path in pathsToTry)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to load bundled run {fileName}: {ex.Message}");
-            return null;
+            try
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync(path);
+                using var reader = new StreamReader(stream);
+                var json = await reader.ReadToEndAsync();
+                return JsonSerializer.Deserialize<GeometryRun>(json);
+            }
+            catch
+            {
+                // Try next path
+            }
         }
+
+        // Fallback: try loading from source directory (for development)
+        var sourceDir = AppContext.BaseDirectory;
+        var devPaths = new[]
+        {
+            Path.Combine(sourceDir, "Resources", "Raw", "Samples", fileName),
+            Path.Combine(sourceDir, "..", "..", "..", "..", "Resources", "Raw", "Samples", fileName),
+        };
+
+        foreach (var devPath in devPaths)
+        {
+            try
+            {
+                if (File.Exists(devPath))
+                {
+                    var json = await File.ReadAllTextAsync(devPath);
+                    return JsonSerializer.Deserialize<GeometryRun>(json);
+                }
+            }
+            catch
+            {
+                // Try next path
+            }
+        }
+
+        System.Diagnostics.Debug.WriteLine($"Failed to load bundled run {fileName} from any path");
+        return null;
     }
 
     /// <summary>
