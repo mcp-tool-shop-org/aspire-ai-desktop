@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "run_metadata": {
+    "run_id": "sample_orthogonal_001",
+    "condition": "Orthogonal Professors (Path A)",
+    "seed": 123,
+    "training_items": 1000,
+    "cycles": 100,
+    "holdout_professor": "P3",
+    "conscience_tier": "PLURALISTIC"
+  },
+  "reduction": {
+    "method": "PCA",
+    "input_dim": 768,
+    "output_dim": 2,
+    "explained_variance": [0.42, 0.38],
+    "components": []
+  },
+  "trajectory": {
+    "timesteps": [
+      {"t": 0.0, "state_2d": [-0.7, 0.5], "velocity": [0.08, -0.04], "curvature": 0.03, "effective_dim": 4.5},
+      {"t": 0.1, "state_2d": [-0.5, 0.35], "velocity": [0.1, -0.06], "curvature": 0.05, "effective_dim": 4.3},
+      {"t": 0.2, "state_2d": [-0.25, 0.2], "velocity": [0.12, -0.07], "curvature": 0.06, "effective_dim": 4.1},
+      {"t": 0.3, "state_2d": [0.0, 0.15], "velocity": [0.09, 0.02], "curvature": 0.08, "effective_dim": 3.9},
+      {"t": 0.4, "state_2d": [0.15, 0.25], "velocity": [0.06, 0.05], "curvature": 0.07, "effective_dim": 3.8},
+      {"t": 0.5, "state_2d": [0.25, 0.35], "velocity": [0.04, 0.04], "curvature": 0.05, "effective_dim": 3.7},
+      {"t": 0.6, "state_2d": [0.30, 0.40], "velocity": [0.02, 0.03], "curvature": 0.04, "effective_dim": 3.6},
+      {"t": 0.7, "state_2d": [0.32, 0.42], "velocity": [0.01, 0.02], "curvature": 0.03, "effective_dim": 3.5},
+      {"t": 0.8, "state_2d": [0.33, 0.43], "velocity": [0.005, 0.01], "curvature": 0.02, "effective_dim": 3.5},
+      {"t": 0.9, "state_2d": [0.34, 0.44], "velocity": [0.003, 0.005], "curvature": 0.015, "effective_dim": 3.4},
+      {"t": 1.0, "state_2d": [0.35, 0.45], "velocity": [0.002, 0.003], "curvature": 0.01, "effective_dim": 3.4}
+    ]
+  },
+  "scalars": {
+    "dimensions": ["correctness", "coherence", "calibration", "tradeoffs", "clarity"],
+    "values": [
+      {"t": 0.0, "correctness": 0.40, "coherence": 0.45, "calibration": 0.50, "tradeoffs": 0.35, "clarity": 0.42},
+      {"t": 0.1, "correctness": 0.48, "coherence": 0.52, "calibration": 0.55, "tradeoffs": 0.44, "clarity": 0.50},
+      {"t": 0.2, "correctness": 0.55, "coherence": 0.58, "calibration": 0.60, "tradeoffs": 0.52, "clarity": 0.57},
+      {"t": 0.3, "correctness": 0.60, "coherence": 0.64, "calibration": 0.65, "tradeoffs": 0.58, "clarity": 0.62},
+      {"t": 0.4, "correctness": 0.65, "coherence": 0.70, "calibration": 0.68, "tradeoffs": 0.62, "clarity": 0.66},
+      {"t": 0.5, "correctness": 0.68, "coherence": 0.74, "calibration": 0.70, "tradeoffs": 0.65, "clarity": 0.69},
+      {"t": 0.6, "correctness": 0.70, "coherence": 0.76, "calibration": 0.72, "tradeoffs": 0.67, "clarity": 0.71},
+      {"t": 0.7, "correctness": 0.72, "coherence": 0.78, "calibration": 0.73, "tradeoffs": 0.68, "clarity": 0.72},
+      {"t": 0.8, "correctness": 0.73, "coherence": 0.79, "calibration": 0.74, "tradeoffs": 0.69, "clarity": 0.73},
+      {"t": 0.9, "correctness": 0.74, "coherence": 0.80, "calibration": 0.75, "tradeoffs": 0.70, "clarity": 0.74},
+      {"t": 1.0, "correctness": 0.75, "coherence": 0.81, "calibration": 0.76, "tradeoffs": 0.71, "clarity": 0.75}
+    ]
+  },
+  "geometry": {
+    "eigenvalues": [
+      {"t": 0.0, "values": [0.28, 0.25, 0.22, 0.15, 0.10]},
+      {"t": 0.2, "values": [0.30, 0.26, 0.22, 0.14, 0.08]},
+      {"t": 0.4, "values": [0.32, 0.27, 0.21, 0.13, 0.07]},
+      {"t": 0.6, "values": [0.33, 0.28, 0.21, 0.12, 0.06]},
+      {"t": 0.8, "values": [0.34, 0.28, 0.20, 0.12, 0.06]},
+      {"t": 1.0, "values": [0.35, 0.29, 0.20, 0.11, 0.05]}
+    ],
+    "anisotropy": [
+      {"t": 0.0, "ratio": 1.12},
+      {"t": 0.2, "ratio": 1.15},
+      {"t": 0.4, "ratio": 1.18},
+      {"t": 0.6, "ratio": 1.18},
+      {"t": 0.8, "ratio": 1.21},
+      {"t": 1.0, "ratio": 1.21}
+    ]
+  },
+  "evaluators": {
+    "latent_dim": 5,
+    "professors": [
+      {"name": "P1", "vector": [0.9, 0.1], "holdout": false},
+      {"name": "P2", "vector": [0.1, 0.9], "holdout": false},
+      {"name": "P3", "vector": [0.5, 0.5], "holdout": true}
+    ]
+  },
+  "failures": [
+    {"t": 0.15, "category": "correctness_dip", "severity": "MEDIUM", "description": "Correctness decline as P1 and P2 pull in opposite directions"},
+    {"t": 0.35, "category": "calibration_spike", "severity": "LOW", "description": "Overconfidence in compromise position"},
+    {"t": 0.60, "category": "tradeoffs_failure", "severity": "MEDIUM", "description": "Unable to optimize both P1 and P2 criteria simultaneously"},
+    {"t": 0.80, "category": "coherence_plateau", "severity": "LOW", "description": "Learning rate plateau - no further convergence possible"}
+  ]
+}
