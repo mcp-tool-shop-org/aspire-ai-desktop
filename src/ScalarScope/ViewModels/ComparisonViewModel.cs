@@ -38,6 +38,22 @@ public partial class ComparisonViewModel : ObservableObject
     [ObservableProperty]
     private string _comparisonSummary = "";
 
+    [ObservableProperty]
+    private string _interpretationVerdict = "";
+
+    [ObservableProperty]
+    private string _leftDescription = "";
+
+    [ObservableProperty]
+    private string _rightDescription = "";
+
+    // Visual dominance indicators for canvas dimming
+    [ObservableProperty]
+    private bool? _isLeftDominant;
+
+    [ObservableProperty]
+    private bool? _isRightDominant;
+
     // Shared playback controller
     public TrajectoryPlayerViewModel Player { get; } = new();
 
@@ -58,12 +74,104 @@ public partial class ComparisonViewModel : ObservableObject
 
     private void OnTimeChanged()
     {
+        NotifyComputedPropertiesChanged();
+    }
+
+    private void NotifyComputedPropertiesChanged()
+    {
         OnPropertyChanged(nameof(LeftCurrentTrajectory));
         OnPropertyChanged(nameof(LeftCurrentScalars));
         OnPropertyChanged(nameof(LeftCurrentEigenvalues));
         OnPropertyChanged(nameof(RightCurrentTrajectory));
         OnPropertyChanged(nameof(RightCurrentScalars));
         OnPropertyChanged(nameof(RightCurrentEigenvalues));
+    }
+
+    /// <summary>
+    /// Reset the left run to initial state.
+    /// </summary>
+    [RelayCommand]
+    public void ResetLeftRun()
+    {
+        LeftRun = null;
+        LeftRunName = "Load Path A";
+        HasLeftRun = false;
+        UpdateComparisonState();
+        NotifyComputedPropertiesChanged();
+    }
+
+    /// <summary>
+    /// Reset the right run to initial state.
+    /// </summary>
+    [RelayCommand]
+    public void ResetRightRun()
+    {
+        RightRun = null;
+        RightRunName = "Load Path B";
+        HasRightRun = false;
+        UpdateComparisonState();
+        NotifyComputedPropertiesChanged();
+    }
+
+    /// <summary>
+    /// Reset both runs to initial state.
+    /// </summary>
+    [RelayCommand]
+    public void ResetAll()
+    {
+        if (Player.IsPlaying)
+        {
+            Player.PlayPauseCommand.Execute(null);
+        }
+
+        LeftRun = null;
+        LeftRunName = "Load Path A";
+        HasLeftRun = false;
+
+        RightRun = null;
+        RightRunName = "Load Path B";
+        HasRightRun = false;
+
+        HasBothRuns = false;
+        ComparisonSummary = "";
+        InterpretationVerdict = "";
+        LeftDescription = "";
+        RightDescription = "";
+        IsLeftDominant = null;
+        IsRightDominant = null;
+
+        Player.JumpToTimeCommand.Execute(0.0);
+        NotifyComputedPropertiesChanged();
+    }
+
+    /// <summary>
+    /// Load demo runs directly without file picker.
+    /// Called by the demo flow to initialize comparison view.
+    /// </summary>
+    public void LoadDemoRuns(GeometryRun pathA, GeometryRun pathB)
+    {
+        // Reset any existing state
+        if (Player.IsPlaying)
+        {
+            Player.PlayPauseCommand.Execute(null);
+        }
+
+        // Load Path A (orthogonal) on the left
+        LeftRun = pathA;
+        LeftRunName = pathA.Metadata?.Condition ?? "Path A: Orthogonal";
+        HasLeftRun = true;
+
+        // Load Path B (correlated) on the right
+        RightRun = pathB;
+        RightRunName = pathB.Metadata?.Condition ?? "Path B: Correlated";
+        HasRightRun = true;
+
+        // Update comparison state
+        UpdateComparisonState();
+
+        // Reset player to start
+        Player.JumpToTimeCommand.Execute(0.0);
+        NotifyComputedPropertiesChanged();
     }
 
     [RelayCommand]
@@ -163,63 +271,147 @@ public partial class ComparisonViewModel : ObservableObject
     {
         if (LeftRun == null || RightRun == null) return;
 
-        var leftCondition = LeftRun.Metadata.Condition;
-        var rightCondition = RightRun.Metadata.Condition;
-        var leftTier = LeftRun.Metadata.ConscienceTier;
-        var rightTier = RightRun.Metadata.ConscienceTier;
-        var leftFailures = LeftRun.Failures.Count;
-        var rightFailures = RightRun.Failures.Count;
+        var leftCondition = LeftRun.Metadata?.Condition ?? "Unknown";
+        var rightCondition = RightRun.Metadata?.Condition ?? "Unknown";
+        var leftTier = LeftRun.Metadata?.ConscienceTier ?? "?";
+        var rightTier = RightRun.Metadata?.ConscienceTier ?? "?";
+        var leftFailures = LeftRun.Failures?.Count ?? 0;
+        var rightFailures = RightRun.Failures?.Count ?? 0;
 
-        // Compute final eigenvalue comparison
-        var leftFinalEigen = LeftRun.Geometry.Eigenvalues.LastOrDefault()?.Values;
-        var rightFinalEigen = RightRun.Geometry.Eigenvalues.LastOrDefault()?.Values;
+        // Compute final eigenvalue comparison with null safety
+        var leftFinalEigen = LeftRun.Geometry?.Eigenvalues?.LastOrDefault()?.Values;
+        var rightFinalEigen = RightRun.Geometry?.Eigenvalues?.LastOrDefault()?.Values;
 
-        var leftFirstFactor = leftFinalEigen?.Count > 0
-            ? leftFinalEigen[0] / leftFinalEigen.Sum()
+        var leftSum = leftFinalEigen?.Sum() ?? 0;
+        var rightSum = rightFinalEigen?.Sum() ?? 0;
+
+        var leftFirstFactor = (leftFinalEigen?.Count > 0 && leftSum > 0.001)
+            ? leftFinalEigen[0] / leftSum
             : 0;
-        var rightFirstFactor = rightFinalEigen?.Count > 0
-            ? rightFinalEigen[0] / rightFinalEigen.Sum()
+        var rightFirstFactor = (rightFinalEigen?.Count > 0 && rightSum > 0.001)
+            ? rightFinalEigen[0] / rightSum
             : 0;
 
         ComparisonSummary = $"Left: {leftCondition} ({leftTier}, {leftFailures} failures, λ₁={leftFirstFactor:P0})\n" +
                           $"Right: {rightCondition} ({rightTier}, {rightFailures} failures, λ₁={rightFirstFactor:P0})";
+
+        // Generate descriptions for interpretation strip
+        LeftDescription = GenerateRunDescription(LeftRun, leftFirstFactor, "A");
+        RightDescription = GenerateRunDescription(RightRun, rightFirstFactor, "B");
+        InterpretationVerdict = GenerateVerdict(leftFirstFactor, rightFirstFactor, leftFailures, rightFailures);
+
+        // Determine visual dominance for canvas dimming
+        var delta = rightFirstFactor - leftFirstFactor;
+        if (Math.Abs(delta) < 0.1)
+        {
+            // Too close to call - no dimming
+            IsLeftDominant = null;
+            IsRightDominant = null;
+        }
+        else if (delta > 0)
+        {
+            // Right (Path B) is dominant
+            IsLeftDominant = false;
+            IsRightDominant = true;
+        }
+        else
+        {
+            // Left (Path A) is dominant
+            IsLeftDominant = true;
+            IsRightDominant = false;
+        }
+    }
+
+    private static string GenerateRunDescription(GeometryRun run, double firstFactor, string pathLabel)
+    {
+        var tier = run.Metadata.ConscienceTier;
+        var failures = run.Failures.Count;
+
+        if (firstFactor > 0.7)
+            return $"Path {pathLabel}: Strong eigenvalue dominance ({firstFactor:P0}). Evaluators share structure. {tier} tier with {failures} failure(s).";
+        else if (firstFactor > 0.4)
+            return $"Path {pathLabel}: Mixed eigenvalue distribution ({firstFactor:P0}). Partial structure sharing. {tier} tier with {failures} failure(s).";
+        else
+            return $"Path {pathLabel}: Distributed eigenvalues ({firstFactor:P0}). Evaluators are orthogonal. {tier} tier with {failures} failure(s).";
+    }
+
+    private static string GenerateVerdict(double leftFirst, double rightFirst, int leftFail, int rightFail)
+    {
+        var delta = rightFirst - leftFirst;
+
+        if (Math.Abs(delta) < 0.1)
+            return "Both paths show similar eigenvalue structure. No clear convergence advantage.";
+        else if (delta > 0.2)
+            return $"Path B shows stronger convergence (Δλ₁ = +{delta:P0}). Correlated professors enable unified representation.";
+        else if (delta > 0)
+            return $"Path B shows slightly better convergence (Δλ₁ = +{delta:P0}).";
+        else if (delta < -0.2)
+            return $"Path A maintains diversity (Δλ₁ = {delta:P0}). Orthogonal professors prevent collapse.";
+        else
+            return $"Path A shows slightly more distributed learning (Δλ₁ = {delta:P0}).";
     }
 
     // Helper methods for getting data at time t
     private static TrajectoryTimestep? GetTrajectoryAtTime(GeometryRun? run, double t)
     {
-        if (run?.Trajectory.Timesteps is not { Count: > 0 } steps)
-            return null;
+        try
+        {
+            if (run?.Trajectory?.Timesteps is not { Count: > 0 } steps)
+                return null;
 
-        var idx = (int)(t * (steps.Count - 1));
-        return steps[Math.Clamp(idx, 0, steps.Count - 1)];
+            var idx = (int)(t * Math.Max(0, steps.Count - 1));
+            idx = Math.Clamp(idx, 0, steps.Count - 1);
+            return steps[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static ScalarTimestep? GetScalarsAtTime(GeometryRun? run, double t)
     {
-        if (run?.Scalars.Values is not { Count: > 0 } values)
-            return null;
+        try
+        {
+            if (run?.Scalars?.Values is not { Count: > 0 } values)
+                return null;
 
-        var idx = (int)(t * (values.Count - 1));
-        return values[Math.Clamp(idx, 0, values.Count - 1)];
+            var idx = (int)(t * Math.Max(0, values.Count - 1));
+            idx = Math.Clamp(idx, 0, values.Count - 1);
+            return values[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static EigenTimestep? GetEigenvaluesAtTime(GeometryRun? run, double t)
     {
-        if (run?.Geometry.Eigenvalues is not { Count: > 0 } values)
-            return null;
+        try
+        {
+            if (run?.Geometry?.Eigenvalues is not { Count: > 0 } values)
+                return null;
 
-        var idx = (int)(t * (values.Count - 1));
-        return values[Math.Clamp(idx, 0, values.Count - 1)];
+            var idx = (int)(t * Math.Max(0, values.Count - 1));
+            idx = Math.Clamp(idx, 0, values.Count - 1);
+            return values[idx];
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public IEnumerable<TrajectoryTimestep> GetLeftTrajectoryUpToTime(double t)
     {
-        if (LeftRun?.Trajectory.Timesteps is not { Count: > 0 } steps)
+        if (LeftRun?.Trajectory?.Timesteps is not { Count: > 0 } steps)
             yield break;
 
-        var maxIdx = (int)(t * (steps.Count - 1));
-        for (int i = 0; i <= Math.Min(maxIdx, steps.Count - 1); i++)
+        var maxIdx = (int)(t * Math.Max(0, steps.Count - 1));
+        maxIdx = Math.Clamp(maxIdx, 0, steps.Count - 1);
+
+        for (int i = 0; i <= maxIdx && i < steps.Count; i++)
         {
             yield return steps[i];
         }
@@ -227,11 +419,13 @@ public partial class ComparisonViewModel : ObservableObject
 
     public IEnumerable<TrajectoryTimestep> GetRightTrajectoryUpToTime(double t)
     {
-        if (RightRun?.Trajectory.Timesteps is not { Count: > 0 } steps)
+        if (RightRun?.Trajectory?.Timesteps is not { Count: > 0 } steps)
             yield break;
 
-        var maxIdx = (int)(t * (steps.Count - 1));
-        for (int i = 0; i <= Math.Min(maxIdx, steps.Count - 1); i++)
+        var maxIdx = (int)(t * Math.Max(0, steps.Count - 1));
+        maxIdx = Math.Clamp(maxIdx, 0, steps.Count - 1);
+
+        for (int i = 0; i <= maxIdx && i < steps.Count; i++)
         {
             yield return steps[i];
         }

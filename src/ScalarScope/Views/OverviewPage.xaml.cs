@@ -18,15 +18,37 @@ public partial class OverviewPage : ContentPage
 
     private async void OnStartDemoClicked(object? sender, EventArgs e)
     {
-        // Mark that user has seen the demo (started it)
-        UserPreferencesService.MarkDemoSeen();
-        App.Session.RefreshFirstRunState();
+        try
+        {
+            // Start demo - loads both Path A and Path B
+            var (pathA, pathB) = await DemoService.StartDemoAsync();
 
-        // Navigate to Compare tab and start the demo
-        await Shell.Current.GoToAsync("//compare");
+            if (pathA == null || pathB == null)
+            {
+                await DisplayAlert("Demo Error", "Failed to load demo data. Please try again.", "OK");
+                return;
+            }
 
-        // The CompareViewModel will detect demo mode and load both runs
-        // (This will be implemented in Commit 0.3-0.4)
+            // Refresh first-run state
+            App.Session.RefreshFirstRunState();
+
+            // Load runs into ComparisonViewModel
+            App.Comparison.LoadDemoRuns(pathA, pathB);
+
+            // Navigate to Compare tab
+            await Shell.Current.GoToAsync("//compare");
+
+            // Auto-start playback after a brief delay for UI to settle
+            await Task.Delay(500);
+            if (!App.Comparison.Player.IsPlaying)
+            {
+                App.Comparison.Player.PlayPauseCommand.Execute(null);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Demo Error", $"Could not start demo: {ex.Message}", "OK");
+        }
     }
 
     private async void OnLoadOwnRunClicked(object? sender, EventArgs e)

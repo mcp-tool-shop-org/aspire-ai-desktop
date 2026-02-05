@@ -6,6 +6,7 @@ namespace ScalarScope;
 public partial class App : Application
 {
     public static VortexSessionViewModel Session { get; } = new();
+    public static ComparisonViewModel Comparison { get; } = new();
     public static KeyboardService Keyboard { get; private set; } = null!;
     public static bool NeedsRecovery { get; private set; }
 

@@ -4,22 +4,29 @@ namespace ScalarScope.Views;
 
 public partial class ComparisonPage : ContentPage
 {
-    private ComparisonViewModel _viewModel = new();
+    // Use the shared comparison instance from App
+    private ComparisonViewModel ViewModel => App.Comparison;
 
     public ComparisonPage()
     {
         InitializeComponent();
-        BindingContext = _viewModel;
+        BindingContext = App.Comparison;
+    }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
         // Update delta label when time changes
-        _viewModel.Player.TimeChanged += UpdateDeltaLabel;
+        ViewModel.Player.TimeChanged += UpdateDeltaLabel;
+        // Trigger initial update if runs are loaded
+        UpdateDeltaLabel();
     }
 
     private void UpdateDeltaLabel()
     {
-        if (!_viewModel.HasBothRuns) return;
+        if (!ViewModel.HasBothRuns) return;
 
-        var metrics = _viewModel.GetCurrentMetrics();
+        var metrics = ViewModel.GetCurrentMetrics();
         var deltaSign = metrics.FirstFactorDelta >= 0 ? "+" : "";
 
         deltaLabel.Text = $"Δλ₁: {deltaSign}{metrics.FirstFactorDelta:P0}";
@@ -35,6 +42,6 @@ public partial class ComparisonPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        _viewModel.Player.TimeChanged -= UpdateDeltaLabel;
+        ViewModel.Player.TimeChanged -= UpdateDeltaLabel;
     }
 }
