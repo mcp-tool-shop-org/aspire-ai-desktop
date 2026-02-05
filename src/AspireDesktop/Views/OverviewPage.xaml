@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:AspireDesktop.ViewModels"
+             xmlns:controls="clr-namespace:AspireDesktop.Views.Controls"
              x:Class="AspireDesktop.Views.OverviewPage"
              x:DataType="vm:VortexSessionViewModel"
              Title="Overview"
@@ -74,7 +75,7 @@
                         <Label Text="• Trajectory - Flow field and convergence dynamics" TextColor="White"/>
                         <Label Text="• Scalars - Token dimensions as rotating rings" TextColor="White"/>
                         <Label Text="• Geometry - Eigenvalue spectrum and effective dimension" TextColor="White"/>
-                        <Label Text="• Failures - Detected issues and phase transitions" TextColor="White"/>
+                        <Label Text="• Compare - Side-by-side Path A vs Path B analysis" TextColor="White"/>
                     </VerticalStackLayout>
 
                     <Label Text="Path A vs Path B:"
@@ -84,6 +85,74 @@
 
                     <Label TextColor="#888"
                            Text="If eigenvalues collapse to one dominant value, evaluators share structure (Path B). If multiple eigenvalues remain stable, evaluators are orthogonal (Path A)."/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Export Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Export"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#4ecdc4"/>
+
+                    <Label Text="Export visualizations as images or frame sequences for video."
+                           TextColor="#888"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Quick Screenshot"
+                                x:Name="quickExportButton"
+                                Clicked="OnQuickExportClicked"
+                                BackgroundColor="#4ecdc4"
+                                TextColor="White"/>
+                        <Button Grid.Column="1"
+                                Text="Export Settings..."
+                                x:Name="exportSettingsButton"
+                                Clicked="OnExportSettingsClicked"
+                                BackgroundColor="#2a2a4e"
+                                TextColor="White"/>
+                    </Grid>
+
+                    <Label x:Name="exportStatusLabel"
+                           Text=""
+                           TextColor="#888"
+                           FontSize="11"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Keyboard Shortcuts Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Keyboard Shortcuts"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#a29bfe"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="20" RowSpacing="5">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Space" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Play/Pause" TextColor="White"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Left/Right" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step backward/forward" TextColor="White"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Home/End" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="Jump to start/end" TextColor="White"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="S" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="3" Grid.Column="1" Text="Quick screenshot" TextColor="White"/>
+
+                        <Label Grid.Row="4" Grid.Column="0" Text="A" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="4" Grid.Column="1" Text="Toggle annotations" TextColor="White"/>
+                    </Grid>
                 </VerticalStackLayout>
             </Frame>
 

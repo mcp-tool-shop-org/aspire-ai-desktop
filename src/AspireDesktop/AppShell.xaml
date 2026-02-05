@@ -30,6 +30,12 @@
         <Tab Title="Geometry" Icon="geometry.png">
             <ShellContent ContentTemplate="{DataTemplate views:GeometryPage}" Route="geometry"/>
         </Tab>
+        <Tab Title="Compare" Icon="compare.png">
+            <ShellContent ContentTemplate="{DataTemplate views:ComparisonPage}" Route="compare"/>
+        </Tab>
+        <Tab Title="Failures" Icon="failures.png">
+            <ShellContent ContentTemplate="{DataTemplate views:FailuresPage}" Route="failures"/>
+        </Tab>
     </TabBar>
 
 </Shell>

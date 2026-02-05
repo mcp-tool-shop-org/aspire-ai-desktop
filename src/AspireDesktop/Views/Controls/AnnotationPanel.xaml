@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AspireDesktop.Views.Controls.AnnotationPanel"
+             x:Name="panel">
+
+    <Border StrokeThickness="1"
+            Stroke="#2a2a4e"
+            BackgroundColor="#16213e"
+            StrokeShape="RoundRectangle 8"
+            Padding="12">
+
+        <VerticalStackLayout Spacing="10">
+            <Label Text="ANNOTATIONS"
+                   FontSize="10"
+                   TextColor="#666"
+                   FontAttributes="Bold"/>
+
+            <!-- Phase Labels -->
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <BoxView Grid.Column="0"
+                         WidthRequest="12"
+                         HeightRequest="12"
+                         Color="#a29bfe"
+                         CornerRadius="2"
+                         VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="Phase Labels"
+                       TextColor="White"
+                       FontSize="12"
+                       VerticalOptions="Center"
+                       Margin="8,0,0,0"/>
+                <Switch Grid.Column="2"
+                        IsToggled="{Binding ShowPhases, Source={x:Reference panel}}"
+                        OnColor="#a29bfe"
+                        Scale="0.8"/>
+            </Grid>
+
+            <!-- Curvature Warnings -->
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <BoxView Grid.Column="0"
+                         WidthRequest="12"
+                         HeightRequest="12"
+                         Color="#ff9f43"
+                         CornerRadius="2"
+                         VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="Curvature Warnings"
+                       TextColor="White"
+                       FontSize="12"
+                       VerticalOptions="Center"
+                       Margin="8,0,0,0"/>
+                <Switch Grid.Column="2"
+                        IsToggled="{Binding ShowCurvatureWarnings, Source={x:Reference panel}}"
+                        OnColor="#ff9f43"
+                        Scale="0.8"/>
+            </Grid>
+
+            <!-- Eigen Insights -->
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <BoxView Grid.Column="0"
+                         WidthRequest="12"
+                         HeightRequest="12"
+                         Color="#4ecdc4"
+                         CornerRadius="2"
+                         VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="Eigen Insights"
+                       TextColor="White"
+                       FontSize="12"
+                       VerticalOptions="Center"
+                       Margin="8,0,0,0"/>
+                <Switch Grid.Column="2"
+                        IsToggled="{Binding ShowEigenInsights, Source={x:Reference panel}}"
+                        OnColor="#4ecdc4"
+                        Scale="0.8"/>
+            </Grid>
+
+            <!-- Failure Markers -->
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <BoxView Grid.Column="0"
+                         WidthRequest="12"
+                         HeightRequest="12"
+                         Color="#ff6b6b"
+                         CornerRadius="2"
+                         VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="Failure Markers"
+                       TextColor="White"
+                       FontSize="12"
+                       VerticalOptions="Center"
+                       Margin="8,0,0,0"/>
+                <Switch Grid.Column="2"
+                        IsToggled="{Binding ShowFailureMarkers, Source={x:Reference panel}}"
+                        OnColor="#ff6b6b"
+                        Scale="0.8"/>
+            </Grid>
+
+            <!-- Divider -->
+            <BoxView HeightRequest="1"
+                     Color="#2a2a4e"
+                     Margin="0,5"/>
+
+            <!-- Interpretation Guide -->
+            <Label Text="INTERPRETATION"
+                   FontSize="10"
+                   TextColor="#666"
+                   FontAttributes="Bold"/>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="λ₁ > 80%: Shared evaluative axis"
+                       TextColor="#4ecdc4"
+                       FontSize="10"/>
+                <Label Text="λ₁ 50-80%: Partial unification"
+                       TextColor="#ffd93d"
+                       FontSize="10"/>
+                <Label Text="λ₁ &lt; 50%: Orthogonal evaluators"
+                       TextColor="#ff6b6b"
+                       FontSize="10"/>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1"
+                     Color="#2a2a4e"
+                     Margin="0,5"/>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="High curvature = Phase transition"
+                       TextColor="#ff9f43"
+                       FontSize="10"/>
+                <Label Text="Low eff.dim = Stable conscience"
+                       TextColor="#a29bfe"
+                       FontSize="10"/>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

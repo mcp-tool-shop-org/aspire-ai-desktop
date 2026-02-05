@@ -12,6 +12,8 @@ public partial class TrajectoryPlayerViewModel : ObservableObject
     private System.Timers.Timer? _playbackTimer;
     private const double TickIntervalMs = 16.67; // ~60fps
 
+    private static readonly double[] SpeedValues = [0.25, 0.5, 1.0, 2.0, 4.0];
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TimePercent))]
     [NotifyPropertyChangedFor(nameof(TimeDisplay))]
@@ -19,6 +21,9 @@ public partial class TrajectoryPlayerViewModel : ObservableObject
 
     [ObservableProperty]
     private double _speed = 1.0; // 0.25x to 4x
+
+    [ObservableProperty]
+    private int _speedIndex = 2; // Index into speed array: 0=0.25, 1=0.5, 2=1, 3=2, 4=4
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
@@ -42,6 +47,14 @@ public partial class TrajectoryPlayerViewModel : ObservableObject
     {
         _playbackTimer = new System.Timers.Timer(TickIntervalMs);
         _playbackTimer.Elapsed += OnPlaybackTick;
+    }
+
+    partial void OnSpeedIndexChanged(int value)
+    {
+        if (value >= 0 && value < SpeedValues.Length)
+        {
+            Speed = SpeedValues[value];
+        }
     }
 
     [RelayCommand]
@@ -92,6 +105,28 @@ public partial class TrajectoryPlayerViewModel : ObservableObject
     public void SetSpeed(double speed)
     {
         Speed = Math.Clamp(speed, 0.25, 4.0);
+
+        // Update SpeedIndex to match
+        for (int i = 0; i < SpeedValues.Length; i++)
+        {
+            if (Math.Abs(SpeedValues[i] - speed) < 0.01)
+            {
+                SpeedIndex = i;
+                break;
+            }
+        }
+    }
+
+    public void IncreaseSpeed()
+    {
+        if (SpeedIndex < SpeedValues.Length - 1)
+            SpeedIndex++;
+    }
+
+    public void DecreaseSpeed()
+    {
+        if (SpeedIndex > 0)
+            SpeedIndex--;
     }
 
     private void OnPlaybackTick(object? sender, System.Timers.ElapsedEventArgs e)
