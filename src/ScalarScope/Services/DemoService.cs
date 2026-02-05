@@ -58,6 +58,9 @@ public static class DemoService
         {
             IsDemoActive = true;
             UserPreferencesService.MarkDemoSeen();
+
+            // Reset annotation state for new demo
+            DemoAnnotationService.ResetForNewDemo();
         }
 
         return (DemoPathA, DemoPathB);

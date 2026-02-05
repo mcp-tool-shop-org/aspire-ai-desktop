@@ -8,9 +8,12 @@
              Title="Compare"
              BackgroundColor="#0f0f1a">
 
-    <Grid RowDefinitions="Auto,2*,Auto,*,Auto">
+    <Grid RowDefinitions="Auto,Auto,2*,Auto,Auto,*,Auto">
+        <!-- Demo Annotation Banner (shows during guided demo) -->
+        <controls:DemoAnnotationBanner Grid.Row="0" x:Name="demoBanner"/>
+
         <!-- Header with load buttons -->
-        <Grid Grid.Row="0"
+        <Grid Grid.Row="1"
               ColumnDefinitions="*,Auto,*"
               Padding="10"
               BackgroundColor="#1a1a2e">
@@ -82,14 +85,15 @@
         </Grid>
 
         <!-- Side-by-Side Canvases -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,2,*">
+        <Grid Grid.Row="2" ColumnDefinitions="*,2,*">
             <!-- Left Canvas -->
             <controls:ComparisonTrajectoryCanvas Grid.Column="0"
                                                   Run="{Binding LeftRun}"
                                                   CurrentTime="{Binding Player.Time}"
                                                   Label="Path A"
                                                   AccentColor="#4ecdc4"
-                                                  ShowAnnotations="{Binding ShowAnnotations, Source={x:Reference annotationsSwitch}}"/>
+                                                  IsDominant="{Binding IsLeftDominant}"
+                                                  ShowAnnotations="{Binding IsToggled, Source={x:Reference annotationsSwitch}}"/>
 
             <!-- Divider -->
             <BoxView Grid.Column="1"
@@ -101,11 +105,12 @@
                                                   CurrentTime="{Binding Player.Time}"
                                                   Label="Path B"
                                                   AccentColor="#ff6b6b"
-                                                  ShowAnnotations="{Binding ShowAnnotations, Source={x:Reference annotationsSwitch}}"/>
+                                                  IsDominant="{Binding IsRightDominant}"
+                                                  ShowAnnotations="{Binding IsToggled, Source={x:Reference annotationsSwitch}}"/>
         </Grid>
 
         <!-- Toggle Bar -->
-        <HorizontalStackLayout Grid.Row="2"
+        <HorizontalStackLayout Grid.Row="3"
                                Spacing="15"
                                Padding="15,8"
                                BackgroundColor="#1a1a2e"
@@ -127,8 +132,45 @@
                    VerticalOptions="Center"/>
         </HorizontalStackLayout>
 
+        <!-- Interpretation Strip (Verdict) -->
+        <Border Grid.Row="4"
+                BackgroundColor="#16213e"
+                StrokeThickness="0"
+                Padding="15,10"
+                Margin="10,5"
+                StrokeShape="RoundRectangle 8"
+                IsVisible="{Binding HasBothRuns}">
+            <Grid ColumnDefinitions="*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="8">
+                <!-- Path A Description -->
+                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="3">
+                    <Label Text="Path A" FontAttributes="Bold" TextColor="#4ecdc4" FontSize="12"/>
+                    <Label Text="{Binding LeftDescription}" TextColor="#aaa" FontSize="11" LineBreakMode="WordWrap"/>
+                </VerticalStackLayout>
+
+                <!-- Verdict (center) -->
+                <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                        BackgroundColor="#1a1a2e"
+                        StrokeThickness="1"
+                        Stroke="#ffd93d"
+                        Padding="12,8"
+                        StrokeShape="RoundRectangle 6"
+                        VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="VERDICT" FontSize="9" TextColor="#ffd93d" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="{Binding InterpretationVerdict}" TextColor="White" FontSize="11" HorizontalTextAlignment="Center" LineBreakMode="WordWrap" MaximumWidthRequest="250"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Path B Description -->
+                <VerticalStackLayout Grid.Row="0" Grid.Column="2" Spacing="3">
+                    <Label Text="Path B" FontAttributes="Bold" TextColor="#ff6b6b" FontSize="12"/>
+                    <Label Text="{Binding RightDescription}" TextColor="#aaa" FontSize="11" LineBreakMode="WordWrap"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
         <!-- Analytics Panel -->
-        <controls:ComparisonAnalyticsPanel Grid.Row="3"
+        <controls:ComparisonAnalyticsPanel Grid.Row="5"
                                            LeftRun="{Binding LeftRun}"
                                            RightRun="{Binding RightRun}"
                                            CurrentTime="{Binding Player.Time}"
@@ -136,7 +178,7 @@
                                            IsVisible="{Binding IsToggled, Source={x:Reference analyticsSwitch}}"/>
 
         <!-- No runs message -->
-        <VerticalStackLayout Grid.Row="3"
+        <VerticalStackLayout Grid.Row="5"
                              HorizontalOptions="Center"
                              VerticalOptions="Center"
                              IsVisible="{Binding HasBothRuns, Converter={StaticResource InverseBoolConverter}}">
@@ -154,7 +196,7 @@
         </VerticalStackLayout>
 
         <!-- Playback Control -->
-        <controls:PlaybackControl Grid.Row="4"
+        <controls:PlaybackControl Grid.Row="6"
                                   BindingContext="{Binding Player}"/>
     </Grid>
 </ContentPage>
