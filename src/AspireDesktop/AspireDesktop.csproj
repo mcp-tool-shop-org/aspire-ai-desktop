@@ -19,17 +19,27 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>AspireDesktop</ApplicationTitle>
+		<ApplicationTitle>ASPIRE Desktop</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.aspiredesktop</ApplicationId>
+		<ApplicationId>org.mcptoolshop.aspiredesktop</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
+		<Version>1.0.0-rc.1</Version>
 
-		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
-		<WindowsPackageType>None</WindowsPackageType>
+		<!-- Package metadata -->
+		<Authors>ASPIRE Project (mcp-tool-shop-org)</Authors>
+		<Company>mcp-tool-shop-org</Company>
+		<Product>ASPIRE Desktop</Product>
+		<Description>Visualization tool for machine learning training dynamics. Provides time-synchronized playback, side-by-side comparison, annotation overlays, and export functionality for analyzing learned critic trajectories.</Description>
+		<Copyright>Copyright © 2025 ASPIRE Project</Copyright>
+		<PackageTags>visualization;machine-learning;training;skiasharp;maui</PackageTags>
+
+		<!-- Windows packaging for Microsoft Store -->
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>

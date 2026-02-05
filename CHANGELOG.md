@@ -1,0 +1,48 @@
+# Changelog
+
+All notable changes to ASPIRE Desktop will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.0.0-rc.1] - 2025-02-04
+
+### Added
+- **Trajectory Visualization**: Real-time 2D training trajectory playback with GPU-accelerated SkiaSharp rendering
+- **Side-by-Side Comparison**: Compare two training runs with synchronized playback
+- **Annotation System**: Automatic detection and display of:
+  - Phase transitions (dimensional shifts)
+  - Curvature warnings (instability indicators)
+  - Eigenvalue insights (λ₁ dominance analysis)
+  - Failure markers (severity-coded)
+- **Export Capabilities**:
+  - Single frame PNG export (up to 4K)
+  - Frame sequence export for video/GIF creation
+  - Comparison exports with side-by-side layout
+- **Failures Timeline**: Dedicated view for analyzing failure events with severity coding
+- **Comparison Analytics Panel**: Statistical comparison with automated verdict
+- **Playback Controls**:
+  - Play/Pause, step forward/backward
+  - Variable speed (0.25x to 4x)
+  - Keyboard shortcuts (Space, Arrow keys, +/-)
+- **VortexKit Library**: Reusable visualization framework extracted for future projects
+
+### Documentation
+- Demo script for 5-minute walkthrough
+- Quick reference card for keyboard shortcuts
+- Paper companion section for publication appendix
+
+### Technical
+- .NET 9.0 + .NET MAUI for cross-platform desktop
+- SkiaSharp 3.x for high-performance 2D rendering
+- CommunityToolkit.Mvvm for MVVM architecture
+- Support for both light and dark themes
+
+## [0.1.0] - 2025-01-15
+
+### Added
+- Initial project scaffold
+- Basic MAUI shell structure
+- Core data models for training runs
