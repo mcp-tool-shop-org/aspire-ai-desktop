@@ -1,10 +1,10 @@
 # ScalarScope
 
-**Scalar Vortex Visualizer** - Interactive visualization of ASPIRE training dynamics.
+**Scalar Vortex Visualizer** - Interactive visualization of ScalarScope training dynamics.
 
 ## Overview
 
-ScalarScope is a .NET MAUI application that visualizes the geometry of evaluative internalization during ASPIRE training runs. It renders the "scalar vortex" - the flow of learning through multi-dimensional state space - making abstract training dynamics tangible and interpretable.
+ScalarScope is a .NET MAUI application that visualizes the geometry of evaluative internalization during ScalarScope training runs. It renders the "scalar vortex" - the flow of learning through multi-dimensional state space - making abstract training dynamics tangible and interpretable.
 
 ## Key Visualizations
 
@@ -59,7 +59,7 @@ ScalarScope/
 
 ## Data Format
 
-The app loads geometry exports from ASPIRE (`.json` files). See `aspire-engine/src/aspire/export/geometry_export.py` for the schema.
+The app loads geometry exports from ScalarScope (`.json` files). See [scalarscope/export/geometry_export.py](https://github.com/mcp-tool-shop-org/ScalarScope/blob/main/src/scalarscope/export/geometry_export.py) for the schema.
 
 Key sections:
 - `run_metadata` - Condition, seed, conscience tier
@@ -89,13 +89,13 @@ dotnet run -f net8.0-windows10.0.19041.0
 
 1. Launch the app
 2. Click "Load Geometry Run" on the Overview tab
-3. Select an ASPIRE geometry export (`.json`)
+3. Select an ScalarScope geometry export (`.json`)
 4. Use the tabs to explore different visualizations
 5. Use the playback controls to scrub through training time
 
 ## Scientific Background
 
-This visualizer is designed around the key finding from ASPIRE research:
+This visualizer is designed around the key finding from ScalarScope research:
 
 > **Evaluative internalization is possible if and only if evaluators share a latent evaluative manifold.**
 
@@ -108,8 +108,8 @@ The visualizations make this concrete:
 
 ## Related
 
-- [aspire-engine](https://github.com/mcp-tool-shop-org/aspire-engine) - Core ASPIRE training framework
-- RESULTS_AND_LIMITATIONS.md - Full experimental results
+- [ScalarScope (Python)](https://github.com/mcp-tool-shop-org/ScalarScope) - Core training framework
+- [RESULTS_AND_LIMITATIONS.md](docs/RESULTS_AND_LIMITATIONS.md) - Full experimental results
 
 ## License
 
