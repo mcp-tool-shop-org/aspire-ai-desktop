@@ -1,10 +1,10 @@
-# ASPIRE Desktop Beta Guide
+# ScalarScope Beta Guide
 
-Welcome to the ASPIRE Desktop beta program! This guide explains what to test, how to report issues, and what to include in your feedback.
+Welcome to the ScalarScope beta program! This guide explains what to test, how to report issues, and what to include in your feedback.
 
-## What is ASPIRE Desktop?
+## What is ScalarScope?
 
-ASPIRE Desktop is a visualization tool for machine learning training dynamics. It lets you:
+ScalarScope is a visualization tool for machine learning training dynamics. It lets you:
 - Visualize 2D training trajectories in real-time
 - Compare runs side-by-side with synchronized playback
 - Analyze eigenvalue spectra and geometry
@@ -50,7 +50,7 @@ During this beta period, we're looking for feedback on:
 ## How to Report Issues
 
 ### Before Reporting
-1. Check [existing issues](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/issues)
+1. Check [existing issues](https://github.com/mcp-tool-shop-org/scalarscope-desktop/issues)
 2. Create a support bundle (Help > Create Support Bundle)
 
 ### What to Include
@@ -109,9 +109,9 @@ For this RC1 release:
 
 ## Feedback Channels
 
-- **Bug reports**: [GitHub Issues](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/issues)
-- **Feature requests**: [GitHub Issues](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/issues) with `[FEATURE]` prefix
-- **Questions**: [GitHub Discussions](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/discussions)
+- **Bug reports**: [GitHub Issues](https://github.com/mcp-tool-shop-org/scalarscope-desktop/issues)
+- **Feature requests**: [GitHub Issues](https://github.com/mcp-tool-shop-org/scalarscope-desktop/issues) with `[FEATURE]` prefix
+- **Questions**: [GitHub Discussions](https://github.com/mcp-tool-shop-org/scalarscope-desktop/discussions)
 - **Security issues**: See SECURITY.md
 
 ## Timeline
@@ -124,7 +124,7 @@ For this RC1 release:
 
 ## Thank You!
 
-Your feedback directly shapes the product. Every bug report, feature request, and usability observation helps make ASPIRE Desktop better for the research community.
+Your feedback directly shapes the product. Every bug report, feature request, and usability observation helps make ScalarScope better for the research community.
 
 We're particularly interested in hearing from:
 - ML researchers analyzing training dynamics

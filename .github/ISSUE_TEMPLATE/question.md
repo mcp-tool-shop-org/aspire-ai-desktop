@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Ask a question about ASPIRE Desktop
+about: Ask a question about ScalarScope
 title: '[QUESTION] '
 labels: question
 assignees: ''
@@ -21,7 +21,7 @@ Have you looked at:
 
 ## Environment (if relevant)
 - **OS**: [e.g., Windows 11]
-- **ASPIRE Desktop Version**: [e.g., 1.0.0]
+- **ScalarScope Version**: [e.g., 1.0.0]
 
 ## Additional Context
 Add any other context or screenshots about your question.

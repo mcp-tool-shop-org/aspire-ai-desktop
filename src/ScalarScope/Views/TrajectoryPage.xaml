@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ScalarScope.Views.Controls"
+             xmlns:vm="clr-namespace:ScalarScope.ViewModels"
+             x:Class="ScalarScope.Views.TrajectoryPage"
+             x:DataType="vm:VortexSessionViewModel"
+             Title="Trajectory"
+             BackgroundColor="#0f0f1a">
+
+    <Grid RowDefinitions="*,Auto,Auto" ColumnDefinitions="*,Auto">
+        <!-- Main Canvas with Annotation Overlay -->
+        <Grid Grid.Row="0" Grid.Column="0">
+            <controls:TrajectoryCanvas x:Name="trajectoryCanvas"
+                                       Session="{Binding .}"
+                                       ShowVelocity="{Binding ShowVelocity, Source={x:Reference velocitySwitch}}"
+                                       ShowCurvature="{Binding ShowCurvature, Source={x:Reference curvatureSwitch}}"
+                                       ShowProfessors="{Binding ShowProfessors, Source={x:Reference professorsSwitch}}"/>
+
+            <!-- Annotation Overlay (layered on top) -->
+            <controls:AnnotationOverlay x:Name="annotationOverlay"
+                                        Run="{Binding Run}"
+                                        CurrentTime="{Binding Player.Time}"
+                                        ShowPhases="{Binding ShowPhases, Source={x:Reference annotationPanel}}"
+                                        ShowCurvatureWarnings="{Binding ShowCurvatureWarnings, Source={x:Reference annotationPanel}}"
+                                        ShowEigenInsights="{Binding ShowEigenInsights, Source={x:Reference annotationPanel}}"
+                                        ShowFailureMarkers="{Binding ShowFailureMarkers, Source={x:Reference annotationPanel}}"
+                                        IsVisible="{Binding IsToggled, Source={x:Reference annotationsSwitch}}"/>
+        </Grid>
+
+        <!-- Annotation Panel (collapsible sidebar) -->
+        <controls:AnnotationPanel x:Name="annotationPanel"
+                                  Grid.Row="0"
+                                  Grid.Column="1"
+                                  WidthRequest="200"
+                                  Margin="5"
+                                  VerticalOptions="Start"
+                                  IsVisible="{Binding IsToggled, Source={x:Reference annotationsSwitch}}"/>
+
+        <!-- Toggle Panel -->
+        <HorizontalStackLayout Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               Spacing="20"
+                               Padding="15,10"
+                               BackgroundColor="#1a1a2e">
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Velocity" TextColor="#888" VerticalOptions="Center"/>
+                <Switch x:Name="velocitySwitch" IsToggled="True" OnColor="#4ecdc4"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Curvature" TextColor="#888" VerticalOptions="Center"/>
+                <Switch x:Name="curvatureSwitch" IsToggled="True" OnColor="#ff9f43"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Professors" TextColor="#888" VerticalOptions="Center"/>
+                <Switch x:Name="professorsSwitch" IsToggled="True" OnColor="#a29bfe"/>
+            </HorizontalStackLayout>
+            <BoxView WidthRequest="1" Color="#2a2a4e" Margin="10,0"/>
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Annotations" TextColor="#888" VerticalOptions="Center" FontAttributes="Bold"/>
+                <Switch x:Name="annotationsSwitch" IsToggled="False" OnColor="#ffd93d"/>
+            </HorizontalStackLayout>
+        </HorizontalStackLayout>
+
+        <!-- Playback Control -->
+        <controls:PlaybackControl Grid.Row="2"
+                                  Grid.ColumnSpan="2"
+                                  BindingContext="{Binding Player}"/>
+    </Grid>
+</ContentPage>

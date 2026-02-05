@@ -9,7 +9,7 @@
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a security vulnerability in ASPIRE Desktop, please report it responsibly.
+We take security seriously. If you discover a security vulnerability in ScalarScope, please report it responsibly.
 
 ### How to Report
 
@@ -34,7 +34,7 @@ We take security seriously. If you discover a security vulnerability in ASPIRE D
 ### Scope
 
 This security policy covers:
-- ASPIRE Desktop application (AspireDesktop.csproj)
+- ScalarScope application (ScalarScope.csproj)
 - VortexKit visualization library
 - Data handling and storage
 - Export functionality
@@ -47,7 +47,7 @@ This security policy covers:
 
 ## Security Best Practices
 
-When using ASPIRE Desktop:
+When using ScalarScope:
 
 1. **Data Files**: Only open training run JSON files from trusted sources
 2. **Exports**: Review exported images/data before sharing

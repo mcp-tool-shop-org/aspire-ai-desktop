@@ -1,4 +1,4 @@
-# ASPIRE Desktop Quick Reference
+# ScalarScope Quick Reference
 
 ## Keyboard Shortcuts
 
@@ -68,7 +68,7 @@
 - **4K Export** → 3840×2160
 - **Frame Sequence** → PNG sequence for video
 
-Export location: `Documents/ASPIRE Exports/`
+Export location: `Documents/ScalarScope Exports/`
 
 ## The Core Theorem
 
@@ -86,7 +86,7 @@ Export location: `Documents/ASPIRE Exports/`
 
 ## File Format
 
-ASPIRE Desktop reads geometry exports (`.json`) from aspire-engine:
+ScalarScope reads geometry exports (`.json`) from aspire-engine:
 
 ```
 {
@@ -104,4 +104,4 @@ Generate with: `python -m aspire.export.geometry_export`
 
 ---
 
-*ASPIRE Desktop v1.0 | Scientific instrument for evaluative learning dynamics*
+*ScalarScope v1.0 | Scientific instrument for evaluative learning dynamics*

@@ -1,4 +1,4 @@
-# ASPIRE Desktop Demo Script
+# ScalarScope Demo Script
 
 **Duration:** 5 minutes
 **Audience:** Researchers, reviewers, collaborators
@@ -12,7 +12,7 @@
    - `path_a_orthogonal.json` - Run with orthogonal professors (r ≈ 0)
    - `path_b_correlated.json` - Run with correlated professors (r ≈ 0.87)
 
-2. Launch ASPIRE Desktop
+2. Launch ScalarScope
 3. Window should be at least 1400×900 for best visibility
 
 ---
@@ -23,7 +23,7 @@
 
 **[Overview Tab]**
 
-> "ASPIRE Desktop is an interactive instrument for studying evaluative learning dynamics. Let me show you what happens when we train a model with orthogonal evaluators—professors who have no shared conception of quality."
+> "ScalarScope is an interactive instrument for studying evaluative learning dynamics. Let me show you what happens when we train a model with orthogonal evaluators—professors who have no shared conception of quality."
 
 - Click **"Load Geometry Run"**
 - Select `path_a_orthogonal.json`
@@ -184,7 +184,7 @@ Gesture at the two trajectories:
 
 > "This isn't a hyperparameter difference. It's a theorem made visible: **Evaluative internalization is possible if and only if evaluators share a latent evaluative manifold.**"
 
-> "ASPIRE Desktop lets you see that theorem in action—and falsify it if it's wrong."
+> "ScalarScope lets you see that theorem in action—and falsify it if it's wrong."
 
 ---
 

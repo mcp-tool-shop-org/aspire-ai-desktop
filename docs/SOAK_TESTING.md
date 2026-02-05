@@ -1,6 +1,6 @@
 # Soak Testing Guide
 
-This document describes the soak testing process for ASPIRE Desktop, designed to prove stability under continuous use.
+This document describes the soak testing process for ScalarScope, designed to prove stability under continuous use.
 
 ## Overview
 
@@ -14,13 +14,13 @@ Soak testing runs the application through repeated scenarios over an extended pe
 
 ### Quick Test (5 minutes)
 ```bash
-cd tests/AspireDesktop.SoakTests
+cd tests/ScalarScope.SoakTests
 dotnet run -- --quick
 ```
 
 ### Full Test (2 hours)
 ```bash
-cd tests/AspireDesktop.SoakTests
+cd tests/ScalarScope.SoakTests
 dotnet run
 ```
 
@@ -97,14 +97,14 @@ The soak test can run in CI with a shorter duration:
 ```yaml
 - name: Soak Test
   run: |
-    cd tests/AspireDesktop.SoakTests
+    cd tests/ScalarScope.SoakTests
     dotnet run -- --quick --output soak_report.json
 
 - name: Upload Report
   uses: actions/upload-artifact@v4
   with:
     name: soak-test-report
-    path: tests/AspireDesktop.SoakTests/soak_report.json
+    path: tests/ScalarScope.SoakTests/soak_report.json
 ```
 
 ## Interpreting Results
@@ -145,7 +145,7 @@ Each test records execution time. Look for:
 
 For release certification, also perform manual soak testing:
 
-1. Launch ASPIRE Desktop
+1. Launch ScalarScope
 2. Load a training run
 3. Let playback run continuously for 30 minutes
 4. Toggle annotations, change speed, resize window

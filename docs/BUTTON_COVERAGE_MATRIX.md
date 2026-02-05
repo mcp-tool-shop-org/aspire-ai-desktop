@@ -133,5 +133,5 @@ For automated UI testing, consider:
 
 ```bash
 # Example future test command
-dotnet test tests/AspireDesktop.UITests --filter Category=ButtonCoverage
+dotnet test tests/ScalarScope.UITests --filter Category=ButtonCoverage
 ```

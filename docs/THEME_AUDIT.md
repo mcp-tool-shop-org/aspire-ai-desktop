@@ -1,6 +1,6 @@
 # Theme Consistency Audit
 
-This document tracks the UX consistency audit for ASPIRE Desktop across light and dark themes.
+This document tracks the UX consistency audit for ScalarScope across light and dark themes.
 
 ## Audit Date: 2025-02-04
 

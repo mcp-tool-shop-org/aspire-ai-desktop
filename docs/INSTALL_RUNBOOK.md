@@ -1,6 +1,6 @@
-# ASPIRE Desktop Installation Runbook
+# ScalarScope Installation Runbook
 
-This document provides step-by-step instructions for installing, upgrading, and uninstalling ASPIRE Desktop on a clean Windows machine.
+This document provides step-by-step instructions for installing, upgrading, and uninstalling ScalarScope on a clean Windows machine.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ This document provides step-by-step instructions for installing, upgrading, and 
 - **GPU**: Any DirectX 11 compatible (for SkiaSharp hardware acceleration)
 
 ### Runtime Dependencies
-ASPIRE Desktop is self-contained and includes all required runtimes:
+ScalarScope is self-contained and includes all required runtimes:
 - .NET 9.0 Runtime (bundled)
 - Windows App SDK (bundled)
 - No additional VC++ redistributables required
@@ -21,17 +21,17 @@ ASPIRE Desktop is self-contained and includes all required runtimes:
 
 ### Method 1: MSIX Package (Recommended)
 
-1. **Download** the latest `AspireDesktop-{version}-x64.msix` from GitHub Releases
-2. **Verify** the checksum matches `AspireDesktop-{version}-checksums.txt`
+1. **Download** the latest `ScalarScope-{version}-x64.msix` from GitHub Releases
+2. **Verify** the checksum matches `ScalarScope-{version}-checksums.txt`
 3. **Double-click** the MSIX file
 4. **Click "Install"** in the App Installer dialog
 5. **Wait** for installation to complete (~30 seconds)
-6. **Launch** from Start Menu: "ASPIRE Desktop"
+6. **Launch** from Start Menu: "ScalarScope"
 
 ### Method 2: Microsoft Store (When Available)
 
 1. Open Microsoft Store
-2. Search for "ASPIRE Desktop"
+2. Search for "ScalarScope"
 3. Click "Get" / "Install"
 4. Launch from Start Menu
 
@@ -39,12 +39,12 @@ ASPIRE Desktop is self-contained and includes all required runtimes:
 
 ```powershell
 # Clone and build
-git clone https://github.com/mcp-tool-shop-org/aspire-ai-desktop.git
-cd aspire-ai-desktop
-dotnet build src/AspireDesktop/AspireDesktop.csproj -c Release -f net10.0-windows10.0.19041.0
+git clone https://github.com/mcp-tool-shop-org/scalarscope-desktop.git
+cd scalarscope-desktop
+dotnet build src/ScalarScope/ScalarScope.csproj -c Release -f net10.0-windows10.0.19041.0
 
 # Run
-dotnet run --project src/AspireDesktop/AspireDesktop.csproj -f net10.0-windows10.0.19041.0
+dotnet run --project src/ScalarScope/ScalarScope.csproj -f net10.0-windows10.0.19041.0
 ```
 
 ## First Run Verification
@@ -53,7 +53,7 @@ After installation, verify the app works correctly:
 
 ### Step 1: Launch Application
 - Open Start Menu
-- Type "ASPIRE Desktop"
+- Type "ScalarScope"
 - Click to launch
 - **Expected**: App opens with welcome screen within 3 seconds
 
@@ -89,13 +89,13 @@ After installation, verify the app works correctly:
 
 ### Method 1: Settings App
 1. Open Settings > Apps > Installed apps
-2. Find "ASPIRE Desktop"
+2. Find "ScalarScope"
 3. Click "..." > Uninstall
 4. Confirm uninstallation
 
 ### Method 2: Right-click
 1. Open Start Menu
-2. Find "ASPIRE Desktop"
+2. Find "ScalarScope"
 3. Right-click > Uninstall
 
 ### Post-Uninstall State
@@ -106,12 +106,12 @@ After installation, verify the app works correctly:
 - App registration
 
 **Preserved** (user choice):
-- User settings in `%LOCALAPPDATA%\AspireDesktop\`
+- User settings in `%LOCALAPPDATA%\ScalarScope\`
 - Export files in user-chosen locations
 
 **To fully remove user data**:
 ```powershell
-Remove-Item -Recurse "$env:LOCALAPPDATA\AspireDesktop"
+Remove-Item -Recurse "$env:LOCALAPPDATA\ScalarScope"
 ```
 
 ## Troubleshooting
@@ -131,7 +131,7 @@ Remove-Item -Recurse "$env:LOCALAPPDATA\AspireDesktop"
 
 **Solutions**:
 1. Check GPU drivers are up to date
-2. Try: `AspireDesktop.exe --software-rendering`
+2. Try: `ScalarScope.exe --software-rendering`
 3. Check Event Viewer for crash details
 4. Generate support bundle: Help > Create Support Bundle
 
@@ -181,6 +181,6 @@ Use this checklist to certify a clean install:
 
 If you encounter issues not covered here:
 
-1. Check [GitHub Issues](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/issues)
+1. Check [GitHub Issues](https://github.com/mcp-tool-shop-org/scalarscope-desktop/issues)
 2. Create a support bundle: Help > Create Support Bundle
 3. Open a new issue with the support bundle attached

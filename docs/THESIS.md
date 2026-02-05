@@ -255,7 +255,7 @@ The geometry was telling us the truth: the original professors measured fundamen
 
 ### 6.1 Why Visualization Matters
 
-Abstract geometric properties become tangible through visualization. The ASPIRE Desktop application renders training dynamics as:
+Abstract geometric properties become tangible through visualization. The ScalarScope application renders training dynamics as:
 
 | Visualization | What It Shows | Key Question Answered |
 |---------------|---------------|----------------------|
@@ -391,7 +391,7 @@ ASPIRE demonstrates that evaluative internalization is neither guaranteed nor im
 
 This conditional structure is the contribution. It transforms an ambiguous claim ("AI can internalize values") into a testable, falsifiable framework ("AI can internalize values when evaluators share latent structure, and here's how to verify it").
 
-The visualizations in ASPIRE Desktop make these abstract geometric properties tangible. The scalar vortex is not decoration—it is the shape of learning made visible.
+The visualizations in ScalarScope make these abstract geometric properties tangible. The scalar vortex is not decoration—it is the shape of learning made visible.
 
 ---
 
@@ -438,4 +438,4 @@ The visualizations in ASPIRE Desktop make these abstract geometric properties ta
 
 *Repositories:*
 - [aspire-engine](https://github.com/mcp-tool-shop-org/aspire-engine) - Core training framework
-- [aspire-ai-desktop](https://github.com/mcp-tool-shop-org/aspire-ai-desktop) - Visualization application
+- [scalarscope-desktop](https://github.com/mcp-tool-shop-org/scalarscope-desktop) - Visualization application

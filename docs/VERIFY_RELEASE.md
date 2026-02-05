@@ -1,13 +1,13 @@
 # Release Verification Guide
 
-This guide explains how to verify the authenticity and integrity of ASPIRE Desktop releases.
+This guide explains how to verify the authenticity and integrity of ScalarScope releases.
 
 ## Quick Verification
 
 ### Step 1: Download Release Files
-From the [GitHub Releases](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/releases) page, download:
-- `AspireDesktop-{version}-x64.msix` (the installer)
-- `AspireDesktop-{version}-checksums.txt` (SHA256 hashes)
+From the [GitHub Releases](https://github.com/mcp-tool-shop-org/scalarscope-desktop/releases) page, download:
+- `ScalarScope-{version}-x64.msix` (the installer)
+- `ScalarScope-{version}-checksums.txt` (SHA256 hashes)
 
 ### Step 2: Verify Checksum
 Open PowerShell and run:
@@ -16,26 +16,26 @@ Open PowerShell and run:
 cd $env:USERPROFILE\Downloads
 
 # Calculate SHA256 of the downloaded MSIX
-Get-FileHash AspireDesktop-1.0.0-rc.1-x64.msix -Algorithm SHA256
+Get-FileHash ScalarScope-1.0.0-rc.1-x64.msix -Algorithm SHA256
 
 # Compare with the value in checksums.txt
-Get-Content AspireDesktop-1.0.0-rc.1-checksums.txt
+Get-Content ScalarScope-1.0.0-rc.1-checksums.txt
 ```
 
 The hash values must match exactly.
 
 ### Step 3: Verify Certificate (MSIX)
 When you double-click the MSIX, Windows App Installer shows:
-- Publisher name: should be "ASPIRE Project" or "mcp-tool-shop-org"
+- Publisher name: should be "ScalarScope Project" or "mcp-tool-shop-org"
 - Certificate: Should show trusted or explain the certificate chain
 
 ## Checksum Example
 
 ```
-SHA256 Checksums for AspireDesktop 1.0.0-rc.1
+SHA256 Checksums for ScalarScope 1.0.0-rc.1
 Generated: 2025-02-04
 
-AspireDesktop-1.0.0-rc.1-x64.msix
+ScalarScope-1.0.0-rc.1-x64.msix
   e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 
 VortexKit.1.0.0-rc.1.nupkg
@@ -64,7 +64,7 @@ Do NOT install if:
 If you suspect a tampered release:
 1. Do NOT install the file
 2. Note the download source
-3. Report to security@(project email) or [GitHub Security Advisory](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/security/advisories)
+3. Report to security@(project email) or [GitHub Security Advisory](https://github.com/mcp-tool-shop-org/scalarscope-desktop/security/advisories)
 
 ## Build Reproducibility
 
@@ -72,11 +72,11 @@ For advanced verification, you can build from source:
 
 ```bash
 # Clone the exact tag
-git clone --branch v1.0.0-rc.1 https://github.com/mcp-tool-shop-org/aspire-ai-desktop.git
+git clone --branch v1.0.0-rc.1 https://github.com/mcp-tool-shop-org/scalarscope-desktop.git
 
 # Build
-cd aspire-ai-desktop
-dotnet build src/AspireDesktop/AspireDesktop.csproj -c Release -f net10.0-windows10.0.19041.0
+cd scalarscope-desktop
+dotnet build src/ScalarScope/ScalarScope.csproj -c Release -f net10.0-windows10.0.19041.0
 
 # The output should match the distributed binaries
 ```
@@ -100,5 +100,5 @@ For pre-Store releases, MSIX packages may be self-signed or signed with a test c
 ## Questions?
 
 If you have questions about verification:
-- Check [GitHub Discussions](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/discussions)
-- Open an [Issue](https://github.com/mcp-tool-shop-org/aspire-ai-desktop/issues)
+- Check [GitHub Discussions](https://github.com/mcp-tool-shop-org/scalarscope-desktop/discussions)
+- Open an [Issue](https://github.com/mcp-tool-shop-org/scalarscope-desktop/issues)

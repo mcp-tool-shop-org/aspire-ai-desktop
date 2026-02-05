@@ -2,7 +2,7 @@
 
 **A reusable visualization framework for training dynamics**
 
-VortexKit extracts the core visualization patterns from ASPIRE Desktop into a general-purpose library for building interactive training analysis tools.
+VortexKit extracts the core visualization patterns from ScalarScope into a general-purpose library for building interactive training analysis tools.
 
 ## Core Components
 

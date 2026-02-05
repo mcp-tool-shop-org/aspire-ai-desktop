@@ -1,6 +1,6 @@
 # Phase 12 Release Certification Audit
 
-**Project**: ASPIRE Desktop
+**Project**: ScalarScope
 **Goal**: Prove the app is stable, releasable, supportable, and resilient in real environments.
 
 ---
@@ -118,7 +118,7 @@ For every commit:
 **Date**: 2025-02-04
 
 ### What Changed
-- Added `tests/AspireDesktop.SoakTests/` project
+- Added `tests/ScalarScope.SoakTests/` project
 - Implemented `SoakTestRunner` with 5 test scenarios
 - Added `docs/SOAK_TESTING.md` guide
 - CLI options: --duration, --output, --quick
@@ -345,8 +345,8 @@ For every commit:
 ### Release Artifacts
 | Artifact | Purpose | Generated |
 |----------|---------|-----------|
-| `AspireDesktop-{version}-x64.msix` | Windows installer | CI |
-| `AspireDesktop-{version}-checksums.txt` | SHA256 hashes | CI |
+| `ScalarScope-{version}-x64.msix` | Windows installer | CI |
+| `ScalarScope-{version}-checksums.txt` | SHA256 hashes | CI |
 | `VortexKit.{version}.nupkg` | NuGet package | CI |
 | `PHASE12_AUDIT.md` | Certification snapshot | Manual |
 
@@ -437,7 +437,7 @@ Phase 12 is complete when:
 
 ## 🎉 Phase 12 Complete!
 
-**All 10 commits delivered.** ASPIRE Desktop is ready for RC1 release and public beta.
+**All 10 commits delivered.** ScalarScope is ready for RC1 release and public beta.
 
 ### Next Steps
 1. Push all commits to GitHub

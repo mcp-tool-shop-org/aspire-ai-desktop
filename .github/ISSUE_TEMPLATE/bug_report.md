@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in ASPIRE Desktop
+about: Report a bug in ScalarScope
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain the problem.
 
 ## Environment
 - **OS**: [e.g., Windows 11 23H2]
-- **ASPIRE Desktop Version**: [e.g., 1.0.0]
+- **ScalarScope Version**: [e.g., 1.0.0]
 - **GPU**: [e.g., NVIDIA RTX 5080]
 
 ## Training Run File (if applicable)

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ScalarScope.Views.Controls"
+             xmlns:vm="clr-namespace:ScalarScope.ViewModels"
+             x:Class="ScalarScope.Views.ComparisonPage"
+             x:DataType="vm:ComparisonViewModel"
+             Title="Compare"
+             BackgroundColor="#0f0f1a">
+
+    <Grid RowDefinitions="Auto,2*,Auto,*,Auto">
+        <!-- Header with load buttons -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,Auto,*"
+              Padding="10"
+              BackgroundColor="#1a1a2e">
+
+            <!-- Left Run Loader -->
+            <Border Grid.Column="0"
+                    StrokeThickness="1"
+                    Stroke="#4ecdc4"
+                    BackgroundColor="#16213e"
+                    Padding="10"
+                    StrokeShape="RoundRectangle 8">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="PATH A (Orthogonal)"
+                               FontSize="10"
+                               TextColor="#4ecdc4"/>
+                        <Label Text="{Binding LeftRunName}"
+                               FontSize="13"
+                               TextColor="White"
+                               LineBreakMode="TailTruncation"/>
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Load"
+                            Command="{Binding LoadLeftRunCommand}"
+                            BackgroundColor="#4ecdc4"
+                            TextColor="#0f0f1a"
+                            FontSize="11"
+                            Padding="10,5"
+                            HeightRequest="32"/>
+                </Grid>
+            </Border>
+
+            <!-- VS Label -->
+            <Label Grid.Column="1"
+                   Text="VS"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#666"
+                   VerticalOptions="Center"
+                   Margin="15,0"/>
+
+            <!-- Right Run Loader -->
+            <Border Grid.Column="2"
+                    StrokeThickness="1"
+                    Stroke="#ff6b6b"
+                    BackgroundColor="#16213e"
+                    Padding="10"
+                    StrokeShape="RoundRectangle 8">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="PATH B (Correlated)"
+                               FontSize="10"
+                               TextColor="#ff6b6b"/>
+                        <Label Text="{Binding RightRunName}"
+                               FontSize="13"
+                               TextColor="White"
+                               LineBreakMode="TailTruncation"/>
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Load"
+                            Command="{Binding LoadRightRunCommand}"
+                            BackgroundColor="#ff6b6b"
+                            TextColor="White"
+                            FontSize="11"
+                            Padding="10,5"
+                            HeightRequest="32"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Side-by-Side Canvases -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,2,*">
+            <!-- Left Canvas -->
+            <controls:ComparisonTrajectoryCanvas Grid.Column="0"
+                                                  Run="{Binding LeftRun}"
+                                                  CurrentTime="{Binding Player.Time}"
+                                                  Label="Path A"
+                                                  AccentColor="#4ecdc4"
+                                                  ShowAnnotations="{Binding ShowAnnotations, Source={x:Reference annotationsSwitch}}"/>
+
+            <!-- Divider -->
+            <BoxView Grid.Column="1"
+                     Color="#2a2a4e"/>
+
+            <!-- Right Canvas -->
+            <controls:ComparisonTrajectoryCanvas Grid.Column="2"
+                                                  Run="{Binding RightRun}"
+                                                  CurrentTime="{Binding Player.Time}"
+                                                  Label="Path B"
+                                                  AccentColor="#ff6b6b"
+                                                  ShowAnnotations="{Binding ShowAnnotations, Source={x:Reference annotationsSwitch}}"/>
+        </Grid>
+
+        <!-- Toggle Bar -->
+        <HorizontalStackLayout Grid.Row="2"
+                               Spacing="15"
+                               Padding="15,8"
+                               BackgroundColor="#1a1a2e"
+                               HorizontalOptions="Center">
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Annotations" TextColor="#888" FontSize="11" VerticalOptions="Center"/>
+                <Switch x:Name="annotationsSwitch" IsToggled="False" OnColor="#a29bfe" Scale="0.8"/>
+            </HorizontalStackLayout>
+            <BoxView WidthRequest="1" Color="#2a2a4e"/>
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Analytics" TextColor="#888" FontSize="11" VerticalOptions="Center"/>
+                <Switch x:Name="analyticsSwitch" IsToggled="True" OnColor="#ffd93d" Scale="0.8"/>
+            </HorizontalStackLayout>
+            <BoxView WidthRequest="1" Color="#2a2a4e"/>
+            <Label x:Name="deltaLabel"
+                   TextColor="#ffd93d"
+                   FontSize="11"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <!-- Analytics Panel -->
+        <controls:ComparisonAnalyticsPanel Grid.Row="3"
+                                           LeftRun="{Binding LeftRun}"
+                                           RightRun="{Binding RightRun}"
+                                           CurrentTime="{Binding Player.Time}"
+                                           Margin="10,5"
+                                           IsVisible="{Binding IsToggled, Source={x:Reference analyticsSwitch}}"/>
+
+        <!-- No runs message -->
+        <VerticalStackLayout Grid.Row="3"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             IsVisible="{Binding HasBothRuns, Converter={StaticResource InverseBoolConverter}}">
+            <Label Text="Load two runs to compare Path A vs Path B"
+                   TextColor="#666"
+                   FontSize="12"
+                   HorizontalOptions="Center"/>
+            <Label Text="Path A: Orthogonal professors (r ≈ 0)"
+                   TextColor="#4ecdc4"
+                   FontSize="11"
+                   Margin="0,10,0,0"/>
+            <Label Text="Path B: Correlated professors (r ≈ 0.87)"
+                   TextColor="#ff6b6b"
+                   FontSize="11"/>
+        </VerticalStackLayout>
+
+        <!-- Playback Control -->
+        <controls:PlaybackControl Grid.Row="4"
+                                  BindingContext="{Binding Player}"/>
+    </Grid>
+</ContentPage>

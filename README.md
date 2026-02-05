@@ -1,10 +1,10 @@
-# ASPIRE AI Desktop
+# ScalarScope
 
 **Scalar Vortex Visualizer** - Interactive visualization of ASPIRE training dynamics.
 
 ## Overview
 
-ASPIRE AI Desktop is a .NET MAUI application that visualizes the geometry of evaluative internalization during ASPIRE training runs. It renders the "scalar vortex" - the flow of learning through multi-dimensional state space - making abstract training dynamics tangible and interpretable.
+ScalarScope is a .NET MAUI application that visualizes the geometry of evaluative internalization during ASPIRE training runs. It renders the "scalar vortex" - the flow of learning through multi-dimensional state space - making abstract training dynamics tangible and interpretable.
 
 ## Key Visualizations
 
@@ -39,7 +39,7 @@ ASPIRE AI Desktop is a .NET MAUI application that visualizes the geometry of eva
 ## Architecture
 
 ```
-AspireDesktop/
+ScalarScope/
 ├── Models/
 │   └── GeometryRun.cs        # JSON schema for geometry exports
 ├── ViewModels/
@@ -77,7 +77,7 @@ Key sections:
 # - Visual Studio 2022 or VS Code with MAUI workload
 
 # Restore and build
-cd src/AspireDesktop
+cd src/ScalarScope
 dotnet restore
 dotnet build
 

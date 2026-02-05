@@ -1,11 +1,11 @@
 # Data Persistence Rules
 
-This document describes what data ASPIRE Desktop stores, where it's stored, and what happens during install/upgrade/uninstall.
+This document describes what data ScalarScope stores, where it's stored, and what happens during install/upgrade/uninstall.
 
 ## Storage Locations
 
 ### Application Data
-**Location**: `%LOCALAPPDATA%\AspireDesktop\`
+**Location**: `%LOCALAPPDATA%\ScalarScope\`
 
 Contains:
 - `settings.json` - User preferences (theme, default export settings)
@@ -14,7 +14,7 @@ Contains:
 - `logs/` - Application logs (rotated, max 10 MB)
 
 ### Temporary Data
-**Location**: `%TEMP%\AspireDesktop\`
+**Location**: `%TEMP%\ScalarScope\`
 
 Contains:
 - Frame export buffers (cleaned on exit)
@@ -31,7 +31,7 @@ Contains:
 ## Lifecycle Behavior
 
 ### Fresh Install
-- Creates `%LOCALAPPDATA%\AspireDesktop\` directory
+- Creates `%LOCALAPPDATA%\ScalarScope\` directory
 - Initializes `settings.json` with defaults
 - No migration needed
 
@@ -43,14 +43,14 @@ Contains:
 
 ### Uninstall
 - Removes application files
-- **Preserves** `%LOCALAPPDATA%\AspireDesktop\` by default
+- **Preserves** `%LOCALAPPDATA%\ScalarScope\` by default
 - User can manually delete to fully clean
 
 ### Full Clean Uninstall
 ```powershell
 # After standard uninstall:
-Remove-Item -Recurse "$env:LOCALAPPDATA\AspireDesktop"
-Remove-Item -Recurse "$env:TEMP\AspireDesktop" -ErrorAction SilentlyContinue
+Remove-Item -Recurse "$env:LOCALAPPDATA\ScalarScope"
+Remove-Item -Recurse "$env:TEMP\ScalarScope" -ErrorAction SilentlyContinue
 ```
 
 ## Settings Schema
@@ -99,7 +99,7 @@ Remove-Item -Recurse "$env:TEMP\AspireDesktop" -ErrorAction SilentlyContinue
 
 ## Privacy Considerations
 
-ASPIRE Desktop:
+ScalarScope:
 - Does **NOT** collect telemetry
 - Does **NOT** phone home
 - Does **NOT** upload user data
@@ -107,14 +107,14 @@ ASPIRE Desktop:
 
 ## Backup Recommendations
 
-To backup ASPIRE Desktop settings:
+To backup ScalarScope settings:
 ```powershell
-Copy-Item -Recurse "$env:LOCALAPPDATA\AspireDesktop" "D:\Backup\AspireDesktop"
+Copy-Item -Recurse "$env:LOCALAPPDATA\ScalarScope" "D:\Backup\ScalarScope"
 ```
 
 To restore:
 ```powershell
-Copy-Item -Recurse "D:\Backup\AspireDesktop" "$env:LOCALAPPDATA\AspireDesktop"
+Copy-Item -Recurse "D:\Backup\ScalarScope" "$env:LOCALAPPDATA\ScalarScope"
 ```
 
 ## Version Migration

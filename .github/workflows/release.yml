@@ -26,7 +26,7 @@ jobs:
 
     - name: Build Release
       run: |
-        dotnet publish src/AspireDesktop/AspireDesktop.csproj `
+        dotnet publish src/ScalarScope/ScalarScope.csproj `
           --configuration Release `
           -f net10.0-windows10.0.19041.0 `
           -p:RuntimeIdentifier=win-x64 `

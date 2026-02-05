@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ScalarScope.ViewModels"
+             xmlns:controls="clr-namespace:ScalarScope.Views.Controls"
+             x:Class="ScalarScope.Views.OverviewPage"
+             x:DataType="vm:VortexSessionViewModel"
+             Title="Overview"
+             BackgroundColor="#0f0f1a">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <!-- Header -->
+            <Label Text="ScalarScope"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center"/>
+
+            <!-- Load Button -->
+            <Button Text="Load Geometry Run"
+                    Command="{Binding LoadRunCommand}"
+                    BackgroundColor="#00d9ff"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"/>
+
+            <!-- Run Summary Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Run Summary"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#00d9ff"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="15" RowSpacing="8">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Run:" TextColor="#888"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding RunName}" TextColor="White"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Condition:" TextColor="#888"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Condition}" TextColor="White"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Conscience Tier:" TextColor="#888"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding ConscienceTier}" TextColor="#00ff88"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="Failures:" TextColor="#888"/>
+                        <Label Grid.Row="3" Grid.Column="1" Text="{Binding FailureCount}" TextColor="#ff6b6b"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Interpretation Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Key Findings"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#ffd93d"/>
+
+                    <Label Text="Use the tabs to explore:"
+                           TextColor="#888"/>
+
+                    <VerticalStackLayout Spacing="5" Padding="10,0">
+                        <Label Text="• Trajectory - Flow field and convergence dynamics" TextColor="White"/>
+                        <Label Text="• Scalars - Token dimensions as rotating rings" TextColor="White"/>
+                        <Label Text="• Geometry - Eigenvalue spectrum and effective dimension" TextColor="White"/>
+                        <Label Text="• Compare - Side-by-side Path A vs Path B analysis" TextColor="White"/>
+                    </VerticalStackLayout>
+
+                    <Label Text="Path A vs Path B:"
+                           TextColor="#c56cf0"
+                           FontAttributes="Bold"
+                           Margin="0,10,0,0"/>
+
+                    <Label TextColor="#888"
+                           Text="If eigenvalues collapse to one dominant value, evaluators share structure (Path B). If multiple eigenvalues remain stable, evaluators are orthogonal (Path A)."/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Export Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Export"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#4ecdc4"/>
+
+                    <Label Text="Export visualizations as images or frame sequences for video."
+                           TextColor="#888"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Quick Screenshot"
+                                x:Name="quickExportButton"
+                                Clicked="OnQuickExportClicked"
+                                BackgroundColor="#4ecdc4"
+                                TextColor="White"/>
+                        <Button Grid.Column="1"
+                                Text="Export Settings..."
+                                x:Name="exportSettingsButton"
+                                Clicked="OnExportSettingsClicked"
+                                BackgroundColor="#2a2a4e"
+                                TextColor="White"/>
+                    </Grid>
+
+                    <Label x:Name="exportStatusLabel"
+                           Text=""
+                           TextColor="#888"
+                           FontSize="11"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Keyboard Shortcuts Card -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="20"
+                   IsVisible="{Binding HasRun}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Keyboard Shortcuts"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#a29bfe"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="20" RowSpacing="5">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Space" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Play/Pause" TextColor="White"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Left/Right" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step backward/forward" TextColor="White"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Home/End" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="Jump to start/end" TextColor="White"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="S" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="3" Grid.Column="1" Text="Quick screenshot" TextColor="White"/>
+
+                        <Label Grid.Row="4" Grid.Column="0" Text="A" TextColor="#00d9ff" FontAttributes="Bold"/>
+                        <Label Grid.Row="4" Grid.Column="1" Text="Toggle annotations" TextColor="White"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- No Data Message -->
+            <Frame BackgroundColor="#1a1a2e"
+                   BorderColor="#2a2a4e"
+                   CornerRadius="10"
+                   Padding="30"
+                   IsVisible="{Binding HasRun, Converter={StaticResource InverseBoolConverter}}">
+                <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+                    <Label Text="No Run Loaded"
+                           FontSize="18"
+                           TextColor="#888"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Load a ScalarScope geometry export (.json) to begin visualization."
+                           TextColor="#666"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

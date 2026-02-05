@@ -1,6 +1,6 @@
 # Release Process
 
-This document describes the release process for ASPIRE Desktop.
+This document describes the release process for ScalarScope.
 
 ## Version Scheme
 
@@ -39,7 +39,7 @@ MAJOR.MINOR.PATCH[-PRERELEASE]
    - [ ] Light and dark theme verified
 
 4. **Version Bump**
-   - [ ] Update version in `AspireDesktop.csproj`
+   - [ ] Update version in `ScalarScope.csproj`
    - [ ] Update version in `VortexKit.csproj`
    - [ ] Commit: "chore: bump version to X.Y.Z"
 
@@ -70,14 +70,14 @@ git push origin vX.Y.Z
 ## Artifact Naming
 
 ```
-AspireDesktop-{version}-{arch}.msix
-AspireDesktop-{version}-checksums.txt
+ScalarScope-{version}-{arch}.msix
+ScalarScope-{version}-checksums.txt
 ```
 
 Example:
 ```
-AspireDesktop-1.0.0-rc.1-x64.msix
-AspireDesktop-1.0.0-rc.1-checksums.txt
+ScalarScope-1.0.0-rc.1-x64.msix
+ScalarScope-1.0.0-rc.1-checksums.txt
 ```
 
 ## Changelog Rules

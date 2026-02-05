@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for ASPIRE Desktop
+about: Suggest a new feature for ScalarScope
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
