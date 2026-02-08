@@ -22,10 +22,10 @@ jobs:
       run: dotnet workload install maui-windows
 
     - name: Restore dependencies
-      run: dotnet restore src/ScalarScope/ScalarScope.csproj /p:TargetFrameworks=net9.0-windows10.0.19041.0
+      run: dotnet restore src/ScalarScope/ScalarScope.csproj
 
     - name: Build
-      run: dotnet build src/ScalarScope/ScalarScope.csproj --configuration Release --no-restore -f net9.0-windows10.0.19041.0
+      run: dotnet build src/ScalarScope/ScalarScope.csproj --configuration Release --no-restore
 
     - name: Build VortexKit
       run: dotnet build src/VortexKit/VortexKit.csproj --configuration Release

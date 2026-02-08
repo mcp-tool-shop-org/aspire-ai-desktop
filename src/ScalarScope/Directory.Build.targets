@@ -1,0 +1,6 @@
+<Project>
+  <!-- In CI, only build Windows to avoid workload requirements for Android/iOS/Mac -->
+  <PropertyGroup Condition="'$(CI)' == 'true' OR '$(GITHUB_ACTIONS)' == 'true'">
+    <TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
+  </PropertyGroup>
+</Project>
