@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-02-08
+
+### Changed
+- **MVVM AOT Compatibility**: Migrated all `[ObservableProperty]` fields to partial property syntax for WinRT/AOT compatibility
+  - ComparisonViewModel (15 properties)
+  - VortexSessionViewModel (13 properties)
+  - TrajectoryPlayerViewModel (10 properties)
+  - ExportViewModel (14 properties)
+  - VortexKit PlaybackController (6 properties)
+- **Frame → Border Migration**: Replaced all deprecated `Frame` XAML elements with modern `Border` controls
+  - Migrated 30+ Frame elements across 4 XAML files
+  - ExportPanel, RecoveryPage, OverviewPage, HelpPage
+  - `BorderColor` → `Stroke`, `CornerRadius` → `StrokeShape="RoundRectangle X"`
+
+### Technical
+- Eliminates 104+ MVVM Toolkit source generator AOT warnings
+- Future-proofs XAML for .NET 9+ where Frame is deprecated
+- Zero functional changes, pure technical debt reduction
+
 ## [1.0.6] - 2026-02-08
 
 ### Changed

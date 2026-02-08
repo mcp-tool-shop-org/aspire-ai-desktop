@@ -13,47 +13,47 @@ public partial class ExportViewModel : ObservableObject
     private readonly ExportService _exportService = new();
 
     [ObservableProperty]
-    private GeometryRun? _run;
+    public partial GeometryRun? Run { get; set; }
 
     [ObservableProperty]
-    private GeometryRun? _leftRun;
+    public partial GeometryRun? LeftRun { get; set; }
 
     [ObservableProperty]
-    private GeometryRun? _rightRun;
+    public partial GeometryRun? RightRun { get; set; }
 
     [ObservableProperty]
-    private double _currentTime;
+    public partial double CurrentTime { get; set; }
 
     [ObservableProperty]
-    private bool _isComparison;
+    public partial bool IsComparison { get; set; }
 
     [ObservableProperty]
-    private string _exportStatus = "";
+    public partial string ExportStatus { get; set; } = "";
 
     [ObservableProperty]
-    private bool _isExporting;
+    public partial bool IsExporting { get; set; }
 
     // Export settings
     [ObservableProperty]
-    private int _width = 1920;
+    public partial int Width { get; set; } = 1920;
 
     [ObservableProperty]
-    private int _height = 1080;
+    public partial int Height { get; set; } = 1080;
 
     [ObservableProperty]
-    private int _fps = 30;
+    public partial int Fps { get; set; } = 30;
 
     [ObservableProperty]
-    private double _duration = 5.0;
+    public partial double Duration { get; set; } = 5.0;
 
     [ObservableProperty]
-    private bool _showProfessors = true;
+    public partial bool ShowProfessors { get; set; } = true;
 
     [ObservableProperty]
-    private bool _showMetrics = true;
+    public partial bool ShowMetrics { get; set; } = true;
 
     [ObservableProperty]
-    private bool _showEigenvalues = true;
+    public partial bool ShowEigenvalues { get; set; } = true;
 
     [RelayCommand]
     private async Task ExportCurrentFrameAsync()

@@ -39,10 +39,10 @@
                     IsVisible="{Binding IsFirstRun, Converter={StaticResource InverseBoolConverter}}"/>
 
             <!-- Recent Files Panel (hidden during first-run) -->
-            <Frame x:Name="recentFilesFrame"
+            <Border x:Name="recentFilesFrame"
                    BackgroundColor="#16213e"
-                   BorderColor="#2a2a4e"
-                   CornerRadius="10"
+                   Stroke="#2a2a4e"
+                   StrokeShape="RoundRectangle 10"
                    Padding="15"
                    MaximumWidthRequest="500"
                    HorizontalOptions="Center"
@@ -69,12 +69,12 @@
                         <!-- Recent files are populated in code-behind -->
                     </VerticalStackLayout>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- First-Run Welcome Panel -->
-            <Frame BackgroundColor="#16213e"
-                   BorderColor="#00d9ff"
-                   CornerRadius="15"
+            <Border BackgroundColor="#16213e"
+                   Stroke="#00d9ff"
+                   StrokeShape="RoundRectangle 15"
                    Padding="40"
                    IsVisible="{Binding IsFirstRun}"
                    WidthRequest="600"
@@ -152,12 +152,12 @@
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Error Display -->
-            <Frame BackgroundColor="#2a1515"
-                   BorderColor="#ff6b6b"
-                   CornerRadius="10"
+            <Border BackgroundColor="#2a1515"
+                   Stroke="#ff6b6b"
+                   StrokeShape="RoundRectangle 10"
                    Padding="20"
                    IsVisible="{Binding HasLoadError}">
                 <VerticalStackLayout Spacing="10">
@@ -187,12 +187,12 @@
                             HorizontalOptions="Start"
                             Margin="0,5,0,0"/>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Run Summary Card -->
-            <Frame BackgroundColor="#1a1a2e"
-                   BorderColor="#2a2a4e"
-                   CornerRadius="10"
+            <Border BackgroundColor="#1a1a2e"
+                   Stroke="#2a2a4e"
+                   StrokeShape="RoundRectangle 10"
                    Padding="20"
                    IsVisible="{Binding HasRun}">
                 <VerticalStackLayout Spacing="10">
@@ -215,12 +215,12 @@
                         <Label Grid.Row="3" Grid.Column="1" Text="{Binding FailureCount}" TextColor="#ff6b6b"/>
                     </Grid>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Warnings Panel -->
-            <Frame BackgroundColor="#2a2a15"
-                   BorderColor="#ffd93d"
-                   CornerRadius="10"
+            <Border BackgroundColor="#2a2a15"
+                   Stroke="#ffd93d"
+                   StrokeShape="RoundRectangle 10"
                    Padding="15"
                    IsVisible="{Binding LoadWarnings, Converter={StaticResource ListHasItemsConverter}}">
                 <VerticalStackLayout Spacing="8">
@@ -249,12 +249,12 @@
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Interpretation Card -->
-            <Frame BackgroundColor="#1a1a2e"
-                   BorderColor="#2a2a4e"
-                   CornerRadius="10"
+            <Border BackgroundColor="#1a1a2e"
+                   Stroke="#2a2a4e"
+                   StrokeShape="RoundRectangle 10"
                    Padding="20"
                    IsVisible="{Binding HasRun}">
                 <VerticalStackLayout Spacing="10">
@@ -281,12 +281,12 @@
                     <Label TextColor="#888"
                            Text="One dominant eigenvalue = shared structure. Multiple stable eigenvalues = orthogonal evaluators."/>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Export Card -->
-            <Frame BackgroundColor="#1a1a2e"
-                   BorderColor="#2a2a4e"
-                   CornerRadius="10"
+            <Border BackgroundColor="#1a1a2e"
+                   Stroke="#2a2a4e"
+                   StrokeShape="RoundRectangle 10"
                    Padding="20"
                    IsVisible="{Binding HasRun}">
                 <VerticalStackLayout Spacing="15">
@@ -318,12 +318,12 @@
                            TextColor="#888"
                            FontSize="11"/>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Keyboard Shortcuts Card -->
-            <Frame BackgroundColor="#1a1a2e"
-                   BorderColor="#2a2a4e"
-                   CornerRadius="10"
+            <Border BackgroundColor="#1a1a2e"
+                   Stroke="#2a2a4e"
+                   StrokeShape="RoundRectangle 10"
                    Padding="20"
                    IsVisible="{Binding HasRun}">
                 <VerticalStackLayout Spacing="10">
@@ -352,12 +352,12 @@
                         <Label Grid.Row="5" Grid.Column="1" Text="Switch tabs" TextColor="White"/>
                     </Grid>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Get Started Panel (Empty State - shows after first-run dismissed) -->
-            <Frame BackgroundColor="#1a1a2e"
-                   BorderColor="#00d9ff"
-                   CornerRadius="10"
+            <Border BackgroundColor="#1a1a2e"
+                   Stroke="#00d9ff"
+                   StrokeShape="RoundRectangle 10"
                    Padding="30"
                    IsVisible="{Binding ShowEmptyState}">
                 <VerticalStackLayout Spacing="20" HorizontalOptions="Center">
@@ -386,10 +386,10 @@
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="15" RowSpacing="10" WidthRequest="500">
                         <!-- Path B: Correlated -->
-                        <Frame Grid.Column="0"
+                        <Border Grid.Column="0"
                                BackgroundColor="#16213e"
-                               BorderColor="#4ecdc4"
-                               CornerRadius="8"
+                               Stroke="#4ecdc4"
+                               StrokeShape="RoundRectangle 8"
                                Padding="15">
                             <VerticalStackLayout Spacing="8">
                                 <Label Text="Path B: Convergent"
@@ -407,13 +407,13 @@
                                         HeightRequest="35"
                                         FontSize="12"/>
                             </VerticalStackLayout>
-                        </Frame>
+                        </Border>
 
                         <!-- Path A: Orthogonal -->
-                        <Frame Grid.Column="1"
+                        <Border Grid.Column="1"
                                BackgroundColor="#16213e"
-                               BorderColor="#ff6b6b"
-                               CornerRadius="8"
+                               Stroke="#ff6b6b"
+                               StrokeShape="RoundRectangle 8"
                                Padding="15">
                             <VerticalStackLayout Spacing="8">
                                 <Label Text="Path A: Pluralistic"
@@ -431,7 +431,7 @@
                                         HeightRequest="35"
                                         FontSize="12"/>
                             </VerticalStackLayout>
-                        </Frame>
+                        </Border>
                     </Grid>
 
                     <!-- Divider -->
@@ -444,7 +444,7 @@
                            HorizontalOptions="Center"/>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
         </VerticalStackLayout>
         </ScrollView>

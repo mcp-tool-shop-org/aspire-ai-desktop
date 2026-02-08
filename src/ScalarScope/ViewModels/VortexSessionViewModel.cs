@@ -13,36 +13,36 @@ namespace ScalarScope.ViewModels;
 public partial class VortexSessionViewModel : ObservableObject
 {
     [ObservableProperty]
-    private GeometryRun? _run;
+    public partial GeometryRun? Run { get; set; }
 
     [ObservableProperty]
-    private string _runName = "No training run loaded yet";
+    public partial string RunName { get; set; } = "No training run loaded yet";
 
     [ObservableProperty]
-    private string? _loadedFilePath;
+    public partial string? LoadedFilePath { get; set; }
 
     [ObservableProperty]
-    private bool _hasRun;
+    public partial bool HasRun { get; set; }
 
     [ObservableProperty]
-    private string _loadError = "";
+    public partial string LoadError { get; set; } = "";
 
     [ObservableProperty]
-    private bool _hasLoadError;
+    public partial bool HasLoadError { get; set; }
 
     [ObservableProperty]
-    private List<string> _loadWarnings = [];
+    public partial List<string> LoadWarnings { get; set; } = [];
 
     // Loading state for shimmer animation
     [ObservableProperty]
-    private bool _isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private string _loadingMessage = "Loading...";
+    public partial string LoadingMessage { get; set; } = "Loading...";
 
     // First-run state (checked from UserPreferencesService)
     [ObservableProperty]
-    private bool _isFirstRun;
+    public partial bool IsFirstRun { get; set; }
 
     /// <summary>
     /// True when we should show the empty state panel (not first run, no data loaded).
@@ -50,13 +50,13 @@ public partial class VortexSessionViewModel : ObservableObject
     public bool ShowEmptyState => !IsFirstRun && !HasRun;
 
     [ObservableProperty]
-    private string _condition = "";
+    public partial string Condition { get; set; } = "";
 
     [ObservableProperty]
-    private string _conscienceTier = "";
+    public partial string ConscienceTier { get; set; } = "";
 
     [ObservableProperty]
-    private int _failureCount;
+    public partial int FailureCount { get; set; }
 
     public TrajectoryPlayerViewModel Player { get; } = new();
 

@@ -24,10 +24,10 @@
         </VerticalStackLayout>
 
         <!-- Content -->
-        <Frame Grid.Row="1"
+        <Border Grid.Row="1"
                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#16213e}"
-               BorderColor="{AppThemeBinding Light=#DDDDDD, Dark=#2a2a4e}"
-               CornerRadius="12"
+               Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#2a2a4e}"
+               StrokeShape="RoundRectangle 12"
                Padding="24"
                Margin="0,24"
                MaximumWidthRequest="600"
@@ -73,7 +73,7 @@
                        TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
 
             </VerticalStackLayout>
-        </Frame>
+        </Border>
 
         <!-- Actions -->
         <HorizontalStackLayout Grid.Row="2" Spacing="16" HorizontalOptions="Center">

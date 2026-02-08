@@ -23,40 +23,40 @@ public partial class TrajectoryPlayerViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(TimePercent))]
     [NotifyPropertyChangedFor(nameof(TimeDisplay))]
     [NotifyPropertyChangedFor(nameof(CurrentFrame))]
-    private double _time; // 0.0 to 1.0
+    public partial double Time { get; set; } // 0.0 to 1.0
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SpeedDisplay))]
-    private double _speed = 1.0; // 0.25x to 4x
+    public partial double Speed { get; set; } = 1.0; // 0.25x to 4x
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SpeedDisplay))]
-    private int _speedIndex = 2; // Index into speed array: 0=0.25, 1=0.5, 2=1, 3=2, 4=4
+    public partial int SpeedIndex { get; set; } = 2; // Index into speed array: 0=0.25, 1=0.5, 2=1, 3=2, 4=4
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     [ObservableProperty]
-    private int _totalCycles;
+    public partial int TotalCycles { get; set; }
 
     [ObservableProperty]
-    private double _duration = 10.0; // seconds for full playthrough at 1x
+    public partial double Duration { get; set; } = 10.0; // seconds for full playthrough at 1x
 
     // Speed change visual feedback
     [ObservableProperty]
-    private bool _showSpeedIndicator;
+    public partial bool ShowSpeedIndicator { get; set; }
 
     // Performance settings
     [ObservableProperty]
-    private bool _isLargeRun;
+    public partial bool IsLargeRun { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FrameSkipDisplay))]
-    private int _frameSkip = 1; // 1 = no skip, 2 = every other frame, etc.
+    public partial int FrameSkip { get; set; } = 1; // 1 = no skip, 2 = every other frame, etc.
 
     [ObservableProperty]
-    private bool _reducedDetailMode;
+    public partial bool ReducedDetailMode { get; set; }
 
     private const int LargeRunThreshold = 10_000; // timesteps
     private const int VeryLargeRunThreshold = 30_000;

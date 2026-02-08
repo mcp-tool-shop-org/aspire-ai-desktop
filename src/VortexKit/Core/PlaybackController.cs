@@ -20,38 +20,38 @@ public partial class PlaybackController : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TimePercent))]
     [NotifyPropertyChangedFor(nameof(TimeDisplay))]
-    private double _time;
+    public partial double Time { get; set; }
 
     /// <summary>
     /// Playback speed multiplier.
     /// </summary>
     [ObservableProperty]
-    private double _speed = 1.0;
+    public partial double Speed { get; set; } = 1.0;
 
     /// <summary>
     /// Index into speed presets (0=0.25x, 1=0.5x, 2=1x, 3=2x, 4=4x).
     /// </summary>
     [ObservableProperty]
-    private int _speedIndex = 2;
+    public partial int SpeedIndex { get; set; } = 2;
 
     /// <summary>
     /// Whether playback is currently active.
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotPlaying))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     /// <summary>
     /// Duration in seconds for a full playthrough at 1x speed.
     /// </summary>
     [ObservableProperty]
-    private double _duration = 10.0;
+    public partial double Duration { get; set; } = 10.0;
 
     /// <summary>
     /// Whether playback should loop.
     /// </summary>
     [ObservableProperty]
-    private bool _loop;
+    public partial bool Loop { get; set; }
 
     public double TimePercent => Time * 100;
     public string TimeDisplay => $"{Time:P0}";

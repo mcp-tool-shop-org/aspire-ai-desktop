@@ -5,10 +5,10 @@
              x:Class="ScalarScope.Views.Controls.ExportPanel"
              x:DataType="vm:ExportViewModel">
 
-    <Frame BackgroundColor="#1a1a2e"
-           BorderColor="#2a2a4e"
-           CornerRadius="10"
-           Padding="20">
+    <Border BackgroundColor="#1a1a2e"
+            Stroke="#2a2a4e"
+            StrokeShape="RoundRectangle 10"
+            Padding="20">
         <VerticalStackLayout Spacing="15">
             <Label Text="EXPORT"
                    FontSize="16"
@@ -80,5 +80,5 @@
                                HeightRequest="20"
                                IsVisible="{Binding IsExporting}"/>
         </VerticalStackLayout>
-    </Frame>
+    </Border>
 </ContentView>
