@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-02-08
+
+### Added
+- **Drag-and-Drop**: Drag JSON files directly onto the Overview page to load training runs
+- **Hover Tooltips**: Hover over trajectory points to see real-time values (time, position, velocity)
+- **Zoom & Pan**: Mouse wheel zoom and right-click drag to pan on trajectory canvas
+- **Loading Shimmer**: Animated loading overlay with progress messages when opening files
+- **Reset View Button**: One-click reset for zoom/pan state in trajectory view
+
+### Changed
+- TrajectoryCanvas now supports touch/pointer events for interactive exploration
+- GeometryRun model enhanced with computed velocity magnitude property
+- Refactored session loading to expose loading state via observable properties
+
 ## [1.0.4] - 2026-02-08
 
 ### Added

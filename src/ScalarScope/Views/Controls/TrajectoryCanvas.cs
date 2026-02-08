@@ -26,6 +26,13 @@ public class TrajectoryCanvas : SKCanvasView
     public static readonly BindableProperty ShowProfessorsProperty =
         BindableProperty.Create(nameof(ShowProfessors), typeof(bool), typeof(TrajectoryCanvas), true);
 
+    // Hover state for tooltips
+    public static readonly BindableProperty HoveredPointProperty =
+        BindableProperty.Create(nameof(HoveredPoint), typeof(TrajectoryTimestep), typeof(TrajectoryCanvas));
+
+    public static readonly BindableProperty IsHoveringProperty =
+        BindableProperty.Create(nameof(IsHovering), typeof(bool), typeof(TrajectoryCanvas), false);
+
     public VortexSessionViewModel? Session
     {
         get => (VortexSessionViewModel?)GetValue(SessionProperty);
@@ -50,6 +57,27 @@ public class TrajectoryCanvas : SKCanvasView
         set => SetValue(ShowProfessorsProperty, value);
     }
 
+    public TrajectoryTimestep? HoveredPoint
+    {
+        get => (TrajectoryTimestep?)GetValue(HoveredPointProperty);
+        set => SetValue(HoveredPointProperty, value);
+    }
+
+    public bool IsHovering
+    {
+        get => (bool)GetValue(IsHoveringProperty);
+        set => SetValue(IsHoveringProperty, value);
+    }
+
+    // Zoom and pan state
+    private float _zoomLevel = 1.0f;
+    private SKPoint _panOffset = SKPoint.Empty;
+    private SKPoint? _lastPanPoint;
+
+    // Hover detection
+    private SKPoint? _hoverPoint;
+    private const float HoverRadius = 20f;
+
     // Colors
     private static readonly SKColor BackgroundColor = SKColor.Parse("#1a1a2e");
     private static readonly SKColor GridColor = SKColor.Parse("#2a2a4e");
@@ -71,6 +99,75 @@ public class TrajectoryCanvas : SKCanvasView
     public TrajectoryCanvas()
     {
         PaintSurface += OnPaintSurface;
+        EnableTouchEvents = true;
+        Touch += OnTouch;
+    }
+
+    private void OnTouch(object? sender, SKTouchEventArgs e)
+    {
+        switch (e.ActionType)
+        {
+            case SKTouchAction.Entered:
+            case SKTouchAction.Moved:
+                _hoverPoint = e.Location;
+                UpdateHoveredPoint();
+                InvalidateSurface();
+                break;
+
+            case SKTouchAction.Exited:
+            case SKTouchAction.Cancelled:
+                _hoverPoint = null;
+                HoveredPoint = null;
+                IsHovering = false;
+                InvalidateSurface();
+                break;
+
+            case SKTouchAction.Pressed:
+                _lastPanPoint = e.Location;
+                break;
+
+            case SKTouchAction.Released:
+                _lastPanPoint = null;
+                break;
+
+            case SKTouchAction.WheelChanged:
+                // Zoom with mouse wheel
+                var zoomDelta = e.WheelDelta > 0 ? 1.1f : 0.9f;
+                _zoomLevel = Math.Clamp(_zoomLevel * zoomDelta, 0.25f, 4f);
+                InvalidateSurface();
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    private void UpdateHoveredPoint()
+    {
+        if (_hoverPoint == null || Session?.Run?.Trajectory?.Timesteps == null)
+        {
+            HoveredPoint = null;
+            IsHovering = false;
+            return;
+        }
+
+        var points = Session.Run.Trajectory.Timesteps;
+        TrajectoryTimestep? closest = null;
+        var minDist = float.MaxValue;
+
+        foreach (var pt in points)
+        {
+            if (pt.State2D.Count < 2) continue;
+            var screenPt = ToScreen(pt.State2D);
+            var dist = SKPoint.Distance(screenPt, _hoverPoint.Value);
+            if (dist < minDist && dist < HoverRadius * _zoomLevel)
+            {
+                minDist = dist;
+                closest = pt;
+            }
+        }
+
+        HoveredPoint = closest;
+        IsHovering = closest != null;
     }
 
     private static void OnSessionChanged(BindableObject bindable, object oldValue, object newValue)
@@ -128,8 +225,8 @@ public class TrajectoryCanvas : SKCanvasView
 
         canvas.Clear(BackgroundColor);
 
-        _center = new SKPoint(info.Width / 2f, info.Height / 2f);
-        _scale = Math.Min(info.Width, info.Height) / 4f;
+        _center = new SKPoint(info.Width / 2f + _panOffset.X, info.Height / 2f + _panOffset.Y);
+        _scale = Math.Min(info.Width, info.Height) / 4f * _zoomLevel;
 
         DrawGrid(canvas, info);
 
@@ -165,6 +262,106 @@ public class TrajectoryCanvas : SKCanvasView
 
         DrawCurrentPosition(canvas);
         DrawLegend(canvas, info);
+        DrawHoverTooltip(canvas, info);
+        DrawZoomIndicator(canvas, info);
+    }
+
+    private void DrawHoverTooltip(SKCanvas canvas, SKImageInfo info)
+    {
+        if (!IsHovering || HoveredPoint == null || _hoverPoint == null) return;
+
+        var pt = HoveredPoint;
+        var screenPt = ToScreen(pt.State2D);
+
+        // Tooltip background
+        var tooltipText = new[]
+        {
+            $"t = {pt.Time:F3}",
+            $"x = {pt.State2D[0]:F4}",
+            $"y = {pt.State2D[1]:F4}",
+            $"vel = {pt.VelocityMagnitude:F4}",
+            $"curv = {pt.Curvature:F4}",
+            $"dim = {pt.EffectiveDim:F2}"
+        };
+
+        using var textPaint = new SKPaint
+        {
+            Color = SKColors.White,
+            TextSize = 12,
+            IsAntialias = true
+        };
+
+        using var bgPaint = new SKPaint
+        {
+            Color = SKColor.Parse("#ee1a1a2e"),
+            Style = SKPaintStyle.Fill
+        };
+
+        using var borderPaint = new SKPaint
+        {
+            Color = SKColor.Parse("#00d9ff"),
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 1
+        };
+
+        // Calculate tooltip size
+        var lineHeight = 16f;
+        var padding = 8f;
+        var maxWidth = tooltipText.Max(t => textPaint.MeasureText(t)) + padding * 2;
+        var height = tooltipText.Length * lineHeight + padding * 2;
+
+        // Position tooltip (offset from hover point, keep on screen)
+        var tooltipX = Math.Min(screenPt.X + 15, info.Width - maxWidth - 10);
+        var tooltipY = Math.Min(screenPt.Y - height / 2, info.Height - height - 10);
+        tooltipY = Math.Max(tooltipY, 10);
+
+        var rect = new SKRect(tooltipX, tooltipY, tooltipX + maxWidth, tooltipY + height);
+        canvas.DrawRoundRect(rect, 5, 5, bgPaint);
+        canvas.DrawRoundRect(rect, 5, 5, borderPaint);
+
+        // Draw text lines
+        var y = tooltipY + padding + 12;
+        foreach (var line in tooltipText)
+        {
+            canvas.DrawText(line, tooltipX + padding, y, textPaint);
+            y += lineHeight;
+        }
+
+        // Highlight the hovered point
+        using var highlightPaint = new SKPaint
+        {
+            Color = SKColor.Parse("#00d9ff"),
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 2,
+            IsAntialias = true
+        };
+        canvas.DrawCircle(screenPt, 8, highlightPaint);
+    }
+
+    private void DrawZoomIndicator(SKCanvas canvas, SKImageInfo info)
+    {
+        if (Math.Abs(_zoomLevel - 1.0f) < 0.01f && _panOffset == SKPoint.Empty) return;
+
+        using var paint = new SKPaint
+        {
+            Color = SKColors.White.WithAlpha(150),
+            TextSize = 11,
+            IsAntialias = true
+        };
+
+        var text = $"Zoom: {_zoomLevel:F1}x";
+        var x = info.Width - paint.MeasureText(text) - 10;
+        canvas.DrawText(text, x, info.Height - 10, paint);
+    }
+
+    /// <summary>
+    /// Reset zoom and pan to default.
+    /// </summary>
+    public void ResetView()
+    {
+        _zoomLevel = 1.0f;
+        _panOffset = SKPoint.Empty;
+        InvalidateSurface();
     }
 
     private void DrawGrid(SKCanvas canvas, SKImageInfo info)

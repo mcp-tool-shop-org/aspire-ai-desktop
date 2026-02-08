@@ -90,6 +90,25 @@
                 </HorizontalStackLayout>
                 <Label Text="Interpretive overlays" TextColor="#666" FontSize="10"/>
             </VerticalStackLayout>
+
+            <BoxView WidthRequest="1" Color="#2a2a4e" Margin="5,0"/>
+
+            <!-- Zoom Controls -->
+            <VerticalStackLayout Spacing="1">
+                <HorizontalStackLayout Spacing="5">
+                    <Label Text="View" TextColor="#00d9ff" VerticalOptions="Center" FontAttributes="Bold"/>
+                    <Button x:Name="resetViewButton"
+                            Text="⟲ Reset"
+                            Clicked="OnResetViewClicked"
+                            BackgroundColor="#2a2a4e"
+                            TextColor="#00d9ff"
+                            FontSize="11"
+                            HeightRequest="28"
+                            Padding="8,0"
+                            CornerRadius="4"/>
+                </HorizontalStackLayout>
+                <Label Text="Scroll to zoom, hover for values" TextColor="#666" FontSize="10"/>
+            </VerticalStackLayout>
         </HorizontalStackLayout>
 
         <!-- Toggle Hint -->

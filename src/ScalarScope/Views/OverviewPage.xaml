@@ -8,15 +8,24 @@
              Title="Overview"
              BackgroundColor="#0f0f1a">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
+    <Grid>
+        <!-- Main content with drop support -->
+        <ScrollView>
+            <ScrollView.GestureRecognizers>
+                <DropGestureRecognizer x:Name="dropGesture"
+                                       AllowDrop="True"
+                                       DragOver="OnDragOver"
+                                       DragLeave="OnDragLeave"
+                                       Drop="OnDrop"/>
+            </ScrollView.GestureRecognizers>
+            <VerticalStackLayout Spacing="20" Padding="20">
 
-            <!-- Header -->
-            <Label Text="ScalarScope"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center"/>
+                <!-- Header -->
+                <Label Text="ScalarScope"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
 
             <!-- Load Button (hidden during first-run) -->
             <Button Text="Load Training Dynamics (.json)"
@@ -438,5 +447,28 @@
             </Frame>
 
         </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+
+        <!-- Drop Overlay (shown when dragging file over) -->
+        <Border x:Name="dropOverlay"
+                BackgroundColor="#8000d9ff"
+                IsVisible="False"
+                InputTransparent="True">
+            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                <Label Text="📂"
+                       FontSize="64"
+                       HorizontalOptions="Center"/>
+                <Label Text="Drop JSON file here"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Loading Overlay with shimmer animation -->
+        <controls:LoadingOverlay IsLoading="{Binding IsLoading}"
+                                 Message="{Binding LoadingMessage}"
+                                 IsVisible="{Binding IsLoading}"/>
+    </Grid>
 </ContentPage>

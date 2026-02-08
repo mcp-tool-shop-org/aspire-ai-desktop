@@ -7,4 +7,9 @@ public partial class TrajectoryPage : ContentPage
         InitializeComponent();
         BindingContext = App.Session;
     }
+
+    private void OnResetViewClicked(object? sender, EventArgs e)
+    {
+        trajectoryCanvas.ResetView();
+    }
 }

@@ -33,6 +33,13 @@ public partial class VortexSessionViewModel : ObservableObject
     [ObservableProperty]
     private List<string> _loadWarnings = [];
 
+    // Loading state for shimmer animation
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private string _loadingMessage = "Loading...";
+
     // First-run state (checked from UserPreferencesService)
     [ObservableProperty]
     private bool _isFirstRun;
@@ -124,41 +131,53 @@ public partial class VortexSessionViewModel : ObservableObject
         // Full state reset before loading new file
         ResetState();
 
-        var result = await FileValidationService.ValidateAndLoadAsync(path);
+        // Show loading state
+        IsLoading = true;
+        LoadingMessage = $"Loading {Path.GetFileName(path)}...";
 
-        if (!result.IsSuccess)
+        try
         {
-            RunName = result.ErrorTitle ?? "Error loading file";
-            LoadError = result.GetFormattedError();
-            HasLoadError = true;
-            HasRun = false;
-            return;
+            var result = await FileValidationService.ValidateAndLoadAsync(path);
+
+            if (!result.IsSuccess)
+            {
+                RunName = result.ErrorTitle ?? "Error loading file";
+                LoadError = result.GetFormattedError();
+                HasLoadError = true;
+                HasRun = false;
+                return;
+            }
+
+            LoadingMessage = "Processing trajectory data...";
+            var run = result.Run!;
+
+            // Post-load invariant checks
+            InvariantGuard.AssertTrajectoryMonotonic(run.Trajectory?.Timesteps, $"LoadFromFileAsync({Path.GetFileName(path)})");
+            InvariantGuard.AssertDataConsistentLengths(run, $"LoadFromFileAsync({Path.GetFileName(path)})");
+
+            Run = run;
+            RunName = Path.GetFileNameWithoutExtension(path);
+            LoadedFilePath = path;
+            HasRun = true;
+            HasLoadError = false;
+            LoadWarnings = result.Warnings;
+            Condition = run.Metadata?.Condition ?? "";
+            ConscienceTier = run.Metadata?.ConscienceTier ?? "UNKNOWN";
+            FailureCount = run.Failures?.Count ?? 0;
+            Player.TotalCycles = run.Metadata?.Cycles ?? run.Trajectory?.Timesteps?.Count ?? 0;
+            Player.ConfigureForRunSize(run.Trajectory?.Timesteps?.Count ?? 0);
+            Player.JumpToTimeCommand.Execute(0.0);
+
+            // Add to recent files list
+            UserPreferencesService.AddRecentFile(path, RunName);
+
+            // Notify all computed properties have changed
+            NotifyComputedPropertiesChanged();
         }
-
-        var run = result.Run!;
-
-        // Post-load invariant checks
-        InvariantGuard.AssertTrajectoryMonotonic(run.Trajectory?.Timesteps, $"LoadFromFileAsync({Path.GetFileName(path)})");
-        InvariantGuard.AssertDataConsistentLengths(run, $"LoadFromFileAsync({Path.GetFileName(path)})");
-
-        Run = run;
-        RunName = Path.GetFileNameWithoutExtension(path);
-        LoadedFilePath = path;
-        HasRun = true;
-        HasLoadError = false;
-        LoadWarnings = result.Warnings;
-        Condition = run.Metadata?.Condition ?? "";
-        ConscienceTier = run.Metadata?.ConscienceTier ?? "UNKNOWN";
-        FailureCount = run.Failures?.Count ?? 0;
-        Player.TotalCycles = run.Metadata?.Cycles ?? run.Trajectory?.Timesteps?.Count ?? 0;
-        Player.ConfigureForRunSize(run.Trajectory?.Timesteps?.Count ?? 0);
-        Player.JumpToTimeCommand.Execute(0.0);
-
-        // Add to recent files list
-        UserPreferencesService.AddRecentFile(path, RunName);
-
-        // Notify all computed properties have changed
-        NotifyComputedPropertiesChanged();
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     /// <summary>

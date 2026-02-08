@@ -86,6 +86,9 @@ public record TrajectoryTimestep
     [JsonPropertyName("t")]
     public double T { get; init; }
 
+    // Alias for convenience
+    public double Time => T;
+
     [JsonPropertyName("state_2d")]
     public List<double> State2D { get; init; } = [];
 
@@ -97,6 +100,12 @@ public record TrajectoryTimestep
 
     [JsonPropertyName("effective_dim")]
     public double EffectiveDim { get; init; }
+
+    // Computed property for velocity magnitude
+    [JsonIgnore]
+    public double VelocityMagnitude => Velocity.Count >= 2
+        ? Math.Sqrt(Velocity[0] * Velocity[0] + Velocity[1] * Velocity[1])
+        : 0;
 }
 
 public record ScalarTimeSeries

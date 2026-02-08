@@ -1,5 +1,6 @@
 using ScalarScope.Services;
 using ScalarScope.ViewModels;
+using Microsoft.Maui.Storage;
 
 namespace ScalarScope.Views;
 
@@ -12,6 +13,61 @@ public partial class OverviewPage : ContentPage
     {
         InitializeComponent();
         BindingContext = App.Session;
+    }
+
+    // === Drag and Drop Handlers ===
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        // Show drop overlay when dragging over
+        dropOverlay.IsVisible = true;
+        e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private void OnDragLeave(object? sender, DragEventArgs e)
+    {
+        // Hide drop overlay when dragging out
+        dropOverlay.IsVisible = false;
+    }
+
+    private async void OnDrop(object? sender, DropEventArgs e)
+    {
+        // Hide drop overlay
+        dropOverlay.IsVisible = false;
+
+        try
+        {
+            var data = e.Data;
+            if (data == null) return;
+
+            // Get text data which typically contains file path
+            var text = await data.GetTextAsync();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                // Clean up potential file:// prefix
+                var path = text.Trim();
+                if (path.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
+                {
+                    path = new Uri(path).LocalPath;
+                }
+
+                if (path.EndsWith(".json", StringComparison.OrdinalIgnoreCase) && File.Exists(path))
+                {
+                    await App.Session.LoadFromFileAsync(path);
+                    if (App.Session.HasRun)
+                    {
+                        await Shell.Current.GoToAsync("//trajectory");
+                    }
+                    return;
+                }
+            }
+
+            await DisplayAlert("Invalid File", "Please drop a JSON geometry export file.", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Drop Error", $"Could not load dropped file: {ex.Message}", "OK");
+        }
     }
 
     // === First-Run Demo Handlers ===
