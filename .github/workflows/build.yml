@@ -16,10 +16,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        global-json-file: global.json
+
+    - name: Verify SDK version
+      run: dotnet --version
 
     - name: Install MAUI workload
-      run: dotnet workload install maui-windows
+      run: dotnet workload install maui
 
     - name: Restore dependencies
       run: dotnet restore src/ScalarScope/ScalarScope.csproj
@@ -46,10 +49,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        global-json-file: global.json
+
+    - name: Verify SDK version
+      run: dotnet --version
 
     - name: Install MAUI workload
-      run: dotnet workload install maui-windows
+      run: dotnet workload install maui
 
     - name: Pack VortexKit
       run: dotnet pack src/VortexKit/VortexKit.csproj --configuration Release
